@@ -1811,6 +1811,11 @@ readdirp@~3.5.0:
   dependencies:
     picomatch "^2.2.1"
 
+reading-tool@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/reading-tool/-/reading-tool-1.0.0.tgz#9ce6d2b62b9b1147aab06b104e08b153b7d701a7"
+  integrity sha512-IxdQT3+Ms2kfgN0KbM+jAJMOHqD30qraF7/3bBj9Cn6NX1gsTV2uaWT3EgFV7dkI9uHc4qcBP/pcMFDnVpoHEw==
+
 regexp.prototype.flags@^1.4.3:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/regexp.prototype.flags/-/regexp.prototype.flags-1.5.0.tgz#fe7ce25e7e4cca8db37b6634c8a2c7009199b9cb"
