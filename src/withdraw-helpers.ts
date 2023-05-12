@@ -51,14 +51,14 @@ Wallet.prototype.withdrawPendingBalance = async function (
 ): Promise<ContractTransaction> {
     checkEthProvider(this.ethSigner());
 
-    const zksyncContract = this.getZkSyncMainContract();
+    const rifRollupContract = this.getRifRollupMainContract();
 
     const gasPrice = await this.ethSigner().getGasPrice();
 
     const tokenAddress = this.provider.tokenSet.resolveTokenAddress(token);
-    const withdrawAmount = amount ? amount : await zksyncContract.getPendingBalance(from, tokenAddress);
+    const withdrawAmount = amount ? amount : await rifRollupContract.getPendingBalance(from, tokenAddress);
 
-    return zksyncContract.withdrawPendingBalance(from, tokenAddress, withdrawAmount, {
+    return rifRollupContract.withdrawPendingBalance(from, tokenAddress, withdrawAmount, {
         gasLimit: BigNumber.from('200000'),
         gasPrice
     }) as ContractTransaction;
@@ -79,14 +79,19 @@ Wallet.prototype.withdrawPendingBalances = async function (
 
     const multicallAddress = multicallParams.address || getMulticallAddressByNetwork(multicallParams.network);
 
+<<<<<<< HEAD
     const zksyncContract = this.getZkSyncMainContract();
     const gasPrice = await this.ethSigner().getGasPrice();
+=======
+    const rifRollupContract = this.getRifRollupMainContract();
+    const gasPrice = await this.ethSigner.getGasPrice();
+>>>>>>> 17a4a83 (feat: apply rif specific branding to variable names, package name etc)
 
     const tokensAddresses = tokens.map((token) => this.provider.tokenSet.resolveTokenAddress(token));
 
     if (!amounts) {
         const pendingWithdrawalsPromises = addresses.map((address, i) =>
-            zksyncContract.getPendingBalance(address, tokensAddresses[i])
+            rifRollupContract.getPendingBalance(address, tokensAddresses[i])
         );
         amounts = await Promise.all(pendingWithdrawalsPromises);
     }
@@ -96,13 +101,13 @@ Wallet.prototype.withdrawPendingBalances = async function (
     }
 
     const calls = addresses.map((address, i) => {
-        const callData = zksyncContract.interface.encodeFunctionData('withdrawPendingBalance', [
+        const callData = rifRollupContract.interface.encodeFunctionData('withdrawPendingBalance', [
             address,
             tokensAddresses[i],
             amounts[i]
         ]);
 
-        return [zksyncContract.address, callData];
+        return [rifRollupContract.address, callData];
     });
 
     const multicallContract = new Contract(multicallAddress, MULTICALL_INTERFACE, this.ethSigner());

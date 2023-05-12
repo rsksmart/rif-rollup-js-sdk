@@ -35,11 +35,27 @@ import { AbstractWallet } from './abstract-wallet';
 
 export { Transaction, ETHOperation, submitSignedTransaction, submitSignedTransactionsBatch } from './operations';
 
+<<<<<<< HEAD
 export class Wallet extends AbstractWallet {
     protected constructor(
         public _ethSigner: ethers.Signer,
         private _ethMessageSigner: EthMessageSigner,
         cachedAddress: Address,
+=======
+export class RifRollupTxError extends Error {
+    constructor(message: string, public value: PriorityOperationReceipt | TransactionReceipt) {
+        super(message);
+    }
+}
+
+export class Wallet {
+    public provider: SyncProvider;
+
+    private constructor(
+        public ethSigner: ethers.Signer,
+        public ethMessageSigner: EthMessageSigner,
+        public cachedAddress: Address,
+>>>>>>> 17a4a83 (feat: apply rif specific branding to variable names, package name etc)
         public signer?: Signer,
         accountId?: number,
         public ethSignerType?: EthSignerType
@@ -233,7 +249,43 @@ export class Wallet extends AbstractWallet {
     // L2 operations
     //
 
+<<<<<<< HEAD
     override async signSyncTransfer(transfer: {
+=======
+    async getTransfer(transfer: {
+        to: Address;
+        token: TokenLike;
+        amount: BigNumberish;
+        fee: BigNumberish;
+        nonce: number;
+        validFrom: number;
+        validUntil: number;
+    }): Promise<Transfer> {
+        if (!this.signer) {
+            throw new Error('RifRollup signer is required for sending rifRollup transactions.');
+        }
+
+        await this.setRequiredAccountIdFromServer('Transfer funds');
+
+        const tokenId = this.provider.tokenSet.resolveTokenId(transfer.token);
+
+        const transactionData = {
+            accountId: this.accountId,
+            from: this.address(),
+            to: transfer.to,
+            tokenId,
+            amount: transfer.amount,
+            fee: transfer.fee,
+            nonce: transfer.nonce,
+            validFrom: transfer.validFrom,
+            validUntil: transfer.validUntil
+        };
+
+        return this.signer.signSyncTransfer(transactionData);
+    }
+
+    async signSyncTransfer(transfer: {
+>>>>>>> 17a4a83 (feat: apply rif specific branding to variable names, package name etc)
         to: Address;
         token: TokenLike;
         amount: BigNumberish;
@@ -403,10 +455,18 @@ export class Wallet extends AbstractWallet {
         nonce: number;
         validFrom?: number;
         validUntil?: number;
+<<<<<<< HEAD
     }): Promise<SignedTransaction> {
         withdraw.validFrom = withdraw.validFrom || 0;
         withdraw.validUntil = withdraw.validUntil || MAX_TIMESTAMP;
         const signedWithdrawTransaction = await this.getWithdrawFromSyncToEthereum(withdraw as any);
+=======
+    }): Promise<ForcedExit> {
+        if (!this.signer) {
+            throw new Error('RifRollup signer is required for sending rifRollup transactions.');
+        }
+        await this.setRequiredAccountIdFromServer('perform a Forced Exit');
+>>>>>>> 17a4a83 (feat: apply rif specific branding to variable names, package name etc)
 
         const stringAmount = BigNumber.from(withdraw.amount).isZero()
             ? null
@@ -764,7 +824,7 @@ export class Wallet extends AbstractWallet {
         }[]
     ): Promise<Transaction[]> {
         if (!this.signer) {
-            throw new Error('ZKSync signer is required for sending zksync transactions.');
+            throw new Error('RifRollup signer is required for sending rifRollup transactions.');
         }
 
         if (transfers.length == 0) return [];
@@ -831,6 +891,250 @@ export class Wallet extends AbstractWallet {
             accountId: this.accountId,
             from: this.address(),
             to: transfer.to,
+<<<<<<< HEAD
+=======
+            token: transfer.token.id,
+            amount: 1,
+            fee: 0
+        };
+        const txFee = {
+            to: this.address(),
+            token: transfer.feeToken,
+            amount: 0,
+            fee
+        };
+
+        return await this.syncMultiTransfer([txNFT, txFee]);
+    }
+
+    async getLimitOrder(order: {
+        tokenSell: TokenLike;
+        tokenBuy: TokenLike;
+        ratio: TokenRatio | WeiRatio;
+        recipient?: Address;
+        nonce?: Nonce;
+        validFrom?: number;
+        validUntil?: number;
+    }): Promise<Order> {
+        return this.getOrder({
+            ...order,
+            amount: 0
+        });
+    }
+
+    async getOrder(order: {
+        tokenSell: TokenLike;
+        tokenBuy: TokenLike;
+        ratio: TokenRatio | WeiRatio;
+        amount: BigNumberish;
+        recipient?: Address;
+        nonce?: Nonce;
+        validFrom?: number;
+        validUntil?: number;
+    }): Promise<Order> {
+        if (!this.signer) {
+            throw new Error('RifRollup signer is required for signing an order');
+        }
+        await this.setRequiredAccountIdFromServer('Swap order');
+        const nonce = order.nonce != null ? await this.getNonce(order.nonce) : await this.getNonce();
+        const recipient = order.recipient || this.address();
+
+        let ratio: Ratio;
+        const sell = order.tokenSell;
+        const buy = order.tokenBuy;
+
+        if (!order.ratio[sell] || !order.ratio[buy]) {
+            throw new Error(`Wrong tokens in the ratio object: should be ${sell} and ${buy}`);
+        }
+
+        if (order.ratio.type == 'Wei') {
+            ratio = [order.ratio[sell], order.ratio[buy]];
+        } else if (order.ratio.type == 'Token') {
+            ratio = [
+                this.provider.tokenSet.parseToken(sell, order.ratio[sell].toString()),
+                this.provider.tokenSet.parseToken(buy, order.ratio[buy].toString())
+            ];
+        }
+
+        const signedOrder = await this.signer.signSyncOrder({
+            accountId: this.accountId,
+            recipient,
+            nonce,
+            amount: order.amount || BigNumber.from(0),
+            tokenSell: this.provider.tokenSet.resolveTokenId(order.tokenSell),
+            tokenBuy: this.provider.tokenSet.resolveTokenId(order.tokenBuy),
+            validFrom: order.validFrom || 0,
+            validUntil: order.validUntil || MAX_TIMESTAMP,
+            ratio
+        });
+
+        return this.signOrder(signedOrder);
+    }
+
+    async signOrder(order: Order): Promise<Order> {
+        const stringAmount = BigNumber.from(order.amount).isZero()
+            ? null
+            : this.provider.tokenSet.formatToken(order.tokenSell, order.amount);
+        const stringTokenSell = await this.provider.getTokenSymbol(order.tokenSell);
+        const stringTokenBuy = await this.provider.getTokenSymbol(order.tokenBuy);
+        const ethereumSignature = unableToSign(this.ethSigner)
+            ? null
+            : await this.ethMessageSigner.ethSignOrder({
+                  amount: stringAmount,
+                  tokenSell: stringTokenSell,
+                  tokenBuy: stringTokenBuy,
+                  nonce: order.nonce,
+                  recipient: order.recipient,
+                  ratio: order.ratio
+              });
+        order.ethSignature = ethereumSignature;
+        return order;
+    }
+
+    async getSwap(swap: {
+        orders: [Order, Order];
+        feeToken: number;
+        amounts: [BigNumberish, BigNumberish];
+        nonce: number;
+        fee: BigNumberish;
+    }): Promise<Swap> {
+        if (!this.signer) {
+            throw new Error('RifRollup signer is required for swapping funds');
+        }
+        await this.setRequiredAccountIdFromServer('Swap submission');
+        const feeToken = this.provider.tokenSet.resolveTokenId(swap.feeToken);
+
+        return this.signer.signSyncSwap({
+            ...swap,
+            submitterId: await this.getAccountId(),
+            submitterAddress: this.address(),
+            feeToken
+        });
+    }
+
+    async signSyncSwap(swap: {
+        orders: [Order, Order];
+        feeToken: number;
+        amounts: [BigNumberish, BigNumberish];
+        nonce: number;
+        fee: BigNumberish;
+    }): Promise<SignedTransaction> {
+        const signedSwapTransaction = await this.getSwap(swap);
+        const stringFee = BigNumber.from(swap.fee).isZero()
+            ? null
+            : this.provider.tokenSet.formatToken(swap.feeToken, swap.fee);
+        const stringToken = this.provider.tokenSet.resolveTokenSymbol(swap.feeToken);
+        const ethereumSignature = unableToSign(this.ethSigner)
+            ? null
+            : await this.ethMessageSigner.ethSignSwap({
+                  fee: stringFee,
+                  feeToken: stringToken,
+                  nonce: swap.nonce
+              });
+
+        return {
+            tx: signedSwapTransaction,
+            ethereumSignature: [
+                ethereumSignature,
+                swap.orders[0].ethSignature || null,
+                swap.orders[1].ethSignature || null
+            ]
+        };
+    }
+
+    async syncSwap(swap: {
+        orders: [Order, Order];
+        feeToken: TokenLike;
+        amounts?: [BigNumberish, BigNumberish];
+        nonce?: number;
+        fee?: BigNumberish;
+    }): Promise<Transaction> {
+        swap.nonce = swap.nonce != null ? await this.getNonce(swap.nonce) : await this.getNonce();
+        if (swap.fee == null) {
+            const fullFee = await this.provider.getTransactionFee('Swap', this.address(), swap.feeToken);
+            swap.fee = fullFee.totalFee;
+        }
+
+        if (swap.amounts == null) {
+            let amount0 = BigNumber.from(swap.orders[0].amount);
+            let amount1 = BigNumber.from(swap.orders[1].amount);
+            if (!amount0.eq(0) && !amount1.eq(0)) {
+                swap.amounts = [amount0, amount1];
+            } else {
+                throw new Error('If amounts in orders are implicit, you must specify them during submission');
+            }
+        }
+
+        const signedSwapTransaction = await this.signSyncSwap(swap as any);
+        return submitSignedTransaction(signedSwapTransaction, this.provider);
+    }
+
+    async syncTransfer(transfer: {
+        to: Address;
+        token: TokenLike;
+        amount: BigNumberish;
+        fee?: BigNumberish;
+        nonce?: Nonce;
+        validFrom?: number;
+        validUntil?: number;
+    }): Promise<Transaction> {
+        transfer.nonce = transfer.nonce != null ? await this.getNonce(transfer.nonce) : await this.getNonce();
+
+        if (transfer.fee == null) {
+            const fullFee = await this.provider.getTransactionFee('Transfer', transfer.to, transfer.token);
+            transfer.fee = fullFee.totalFee;
+        }
+        const signedTransferTransaction = await this.signSyncTransfer(transfer as any);
+        return submitSignedTransaction(signedTransferTransaction, this.provider);
+    }
+
+    async getMintNFT(mintNFT: {
+        recipient: string;
+        contentHash: string;
+        feeToken: TokenLike;
+        fee: BigNumberish;
+        nonce: number;
+    }): Promise<MintNFT> {
+        if (!this.signer) {
+            throw new Error('RifRollup signer is required for sending rifRollup transactions.');
+        }
+        await this.setRequiredAccountIdFromServer('MintNFT');
+
+        const feeTokenId = this.provider.tokenSet.resolveTokenId(mintNFT.feeToken);
+        const transactionData = {
+            creatorId: this.accountId,
+            creatorAddress: this.address(),
+            recipient: mintNFT.recipient,
+            contentHash: mintNFT.contentHash,
+            feeTokenId,
+            fee: mintNFT.fee,
+            nonce: mintNFT.nonce
+        };
+
+        return await this.signer.signMintNFT(transactionData);
+    }
+
+    async getWithdrawNFT(withdrawNFT: {
+        to: string;
+        token: TokenLike;
+        feeToken: TokenLike;
+        fee: BigNumberish;
+        nonce: number;
+        validFrom: number;
+        validUntil: number;
+    }): Promise<WithdrawNFT> {
+        if (!this.signer) {
+            throw new Error('RifRollup signer is required for sending rifRollup transactions.');
+        }
+        await this.setRequiredAccountIdFromServer('WithdrawNFT');
+
+        const tokenId = this.provider.tokenSet.resolveTokenId(withdrawNFT.token);
+        const feeTokenId = this.provider.tokenSet.resolveTokenId(withdrawNFT.feeToken);
+        const transactionData = {
+            accountId: this.accountId,
+            from: this.address(),
+            to: withdrawNFT.to,
+>>>>>>> 17a4a83 (feat: apply rif specific branding to variable names, package name etc)
             tokenId,
             amount: transfer.amount,
             fee: transfer.fee,
@@ -842,7 +1146,220 @@ export class Wallet extends AbstractWallet {
         return this.signer.signSyncTransfer(transactionData);
     }
 
+<<<<<<< HEAD
     protected async getChangePubKey(changePubKey: {
+=======
+    async getWithdrawFromSyncToEthereum(withdraw: {
+        ethAddress: string;
+        token: TokenLike;
+        amount: BigNumberish;
+        fee: BigNumberish;
+        nonce: number;
+        validFrom: number;
+        validUntil: number;
+    }): Promise<Withdraw> {
+        if (!this.signer) {
+            throw new Error('RifRollup signer is required for sending rifRollup transactions.');
+        }
+        await this.setRequiredAccountIdFromServer('Withdraw funds');
+
+        const tokenId = this.provider.tokenSet.resolveTokenId(withdraw.token);
+        const transactionData = {
+            accountId: this.accountId,
+            from: this.address(),
+            ethAddress: withdraw.ethAddress,
+            tokenId,
+            amount: withdraw.amount,
+            fee: withdraw.fee,
+            nonce: withdraw.nonce,
+            validFrom: withdraw.validFrom,
+            validUntil: withdraw.validUntil
+        };
+
+        return await this.signer.signSyncWithdraw(transactionData);
+    }
+
+    async signMintNFT(mintNFT: {
+        recipient: string;
+        contentHash: string;
+        feeToken: TokenLike;
+        fee: BigNumberish;
+        nonce: number;
+    }): Promise<SignedTransaction> {
+        const signedMintNFTTransaction = await this.getMintNFT(mintNFT as any);
+
+        const stringFee = BigNumber.from(mintNFT.fee).isZero()
+            ? null
+            : this.provider.tokenSet.formatToken(mintNFT.feeToken, mintNFT.fee);
+        const stringFeeToken = this.provider.tokenSet.resolveTokenSymbol(mintNFT.feeToken);
+        const ethereumSignature = unableToSign(this.ethSigner)
+            ? null
+            : await this.ethMessageSigner.ethSignMintNFT({
+                  stringFeeToken,
+                  stringFee,
+                  recipient: mintNFT.recipient,
+                  contentHash: mintNFT.contentHash,
+                  nonce: mintNFT.nonce
+              });
+
+        return {
+            tx: signedMintNFTTransaction,
+            ethereumSignature
+        };
+    }
+
+    async signWithdrawNFT(withdrawNFT: {
+        to: string;
+        token: number;
+        feeToken: TokenLike;
+        fee: BigNumberish;
+        nonce: number;
+        validFrom?: number;
+        validUntil?: number;
+    }): Promise<SignedTransaction> {
+        withdrawNFT.validFrom = withdrawNFT.validFrom || 0;
+        withdrawNFT.validUntil = withdrawNFT.validUntil || MAX_TIMESTAMP;
+        const signedWithdrawNFTTransaction = await this.getWithdrawNFT(withdrawNFT as any);
+
+        const stringFee = BigNumber.from(withdrawNFT.fee).isZero()
+            ? null
+            : this.provider.tokenSet.formatToken(withdrawNFT.feeToken, withdrawNFT.fee);
+        const stringFeeToken = this.provider.tokenSet.resolveTokenSymbol(withdrawNFT.feeToken);
+        const ethereumSignature = unableToSign(this.ethSigner)
+            ? null
+            : await this.ethMessageSigner.ethSignWithdrawNFT({
+                  token: withdrawNFT.token,
+                  to: withdrawNFT.to,
+                  stringFee,
+                  stringFeeToken,
+                  nonce: withdrawNFT.nonce
+              });
+
+        return {
+            tx: signedWithdrawNFTTransaction,
+            ethereumSignature
+        };
+    }
+
+    async signWithdrawFromSyncToEthereum(withdraw: {
+        ethAddress: string;
+        token: TokenLike;
+        amount: BigNumberish;
+        fee: BigNumberish;
+        nonce: number;
+        validFrom?: number;
+        validUntil?: number;
+    }): Promise<SignedTransaction> {
+        withdraw.validFrom = withdraw.validFrom || 0;
+        withdraw.validUntil = withdraw.validUntil || MAX_TIMESTAMP;
+        const signedWithdrawTransaction = await this.getWithdrawFromSyncToEthereum(withdraw as any);
+
+        const stringAmount = BigNumber.from(withdraw.amount).isZero()
+            ? null
+            : this.provider.tokenSet.formatToken(withdraw.token, withdraw.amount);
+        const stringFee = BigNumber.from(withdraw.fee).isZero()
+            ? null
+            : this.provider.tokenSet.formatToken(withdraw.token, withdraw.fee);
+        const stringToken = this.provider.tokenSet.resolveTokenSymbol(withdraw.token);
+        const ethereumSignature = unableToSign(this.ethSigner)
+            ? null
+            : await this.ethMessageSigner.ethSignWithdraw({
+                  stringAmount,
+                  stringFee,
+                  stringToken,
+                  ethAddress: withdraw.ethAddress,
+                  nonce: withdraw.nonce,
+                  accountId: this.accountId
+              });
+
+        return {
+            tx: signedWithdrawTransaction,
+            ethereumSignature
+        };
+    }
+
+    async mintNFT(mintNFT: {
+        recipient: Address;
+        contentHash: ethers.BytesLike;
+        feeToken: TokenLike;
+        fee?: BigNumberish;
+        nonce?: Nonce;
+    }): Promise<Transaction> {
+        mintNFT.nonce = mintNFT.nonce != null ? await this.getNonce(mintNFT.nonce) : await this.getNonce();
+        mintNFT.contentHash = ethers.utils.hexlify(mintNFT.contentHash);
+
+        if (mintNFT.fee == null) {
+            const fullFee = await this.provider.getTransactionFee('MintNFT', mintNFT.recipient, mintNFT.feeToken);
+            mintNFT.fee = fullFee.totalFee;
+        }
+
+        const signedMintNFTTransaction = await this.signMintNFT(mintNFT as any);
+
+        return submitSignedTransaction(signedMintNFTTransaction, this.provider, false);
+    }
+
+    async withdrawNFT(withdrawNFT: {
+        to: string;
+        token: number;
+        feeToken: TokenLike;
+        fee?: BigNumberish;
+        nonce?: Nonce;
+        fastProcessing?: boolean;
+        validFrom?: number;
+        validUntil?: number;
+    }): Promise<Transaction> {
+        withdrawNFT.nonce = withdrawNFT.nonce != null ? await this.getNonce(withdrawNFT.nonce) : await this.getNonce();
+        if (!isNFT(withdrawNFT.token)) {
+            throw new Error('This token ID does not correspond to an NFT');
+        }
+
+        if (withdrawNFT.fee == null) {
+            const feeType = withdrawNFT.fastProcessing === true ? 'FastWithdrawNFT' : 'WithdrawNFT';
+
+            const fullFee = await this.provider.getTransactionFee(feeType, withdrawNFT.to, withdrawNFT.feeToken);
+            withdrawNFT.fee = fullFee.totalFee;
+        }
+
+        const signedWithdrawNFTTransaction = await this.signWithdrawNFT(withdrawNFT as any);
+
+        return submitSignedTransaction(signedWithdrawNFTTransaction, this.provider, withdrawNFT.fastProcessing);
+    }
+
+    async withdrawFromSyncToEthereum(withdraw: {
+        ethAddress: string;
+        token: TokenLike;
+        amount: BigNumberish;
+        fee?: BigNumberish;
+        nonce?: Nonce;
+        fastProcessing?: boolean;
+        validFrom?: number;
+        validUntil?: number;
+    }): Promise<Transaction> {
+        withdraw.nonce = withdraw.nonce != null ? await this.getNonce(withdraw.nonce) : await this.getNonce();
+
+        if (withdraw.fee == null) {
+            const feeType = withdraw.fastProcessing === true ? 'FastWithdraw' : 'Withdraw';
+
+            const fullFee = await this.provider.getTransactionFee(feeType, withdraw.ethAddress, withdraw.token);
+            withdraw.fee = fullFee.totalFee;
+        }
+
+        const signedWithdrawTransaction = await this.signWithdrawFromSyncToEthereum(withdraw as any);
+
+        return submitSignedTransaction(signedWithdrawTransaction, this.provider, withdraw.fastProcessing);
+    }
+
+    async isSigningKeySet(): Promise<boolean> {
+        if (!this.signer) {
+            throw new Error('RifRollup signer is required for current pubkey calculation.');
+        }
+        const currentPubKeyHash = await this.getCurrentPubKeyHash();
+        const signerPubKeyHash = await this.signer.pubKeyHash();
+        return currentPubKeyHash === signerPubKeyHash;
+    }
+
+    async getChangePubKey(changePubKey: {
+>>>>>>> 17a4a83 (feat: apply rif specific branding to variable names, package name etc)
         feeToken: TokenLike;
         fee: BigNumberish;
         nonce: number;
@@ -852,7 +1369,7 @@ export class Wallet extends AbstractWallet {
         validUntil: number;
     }): Promise<ChangePubKey> {
         if (!this.signer) {
-            throw new Error('ZKSync signer is required for current pubkey calculation.');
+            throw new Error('RifRollup signer is required for current pubkey calculation.');
         }
 
         const feeTokenId = this.provider.tokenSet.resolveTokenId(changePubKey.feeToken);
@@ -1134,10 +1651,149 @@ export class Wallet extends AbstractWallet {
         });
     }
 
+<<<<<<< HEAD
     async getPartialOrder(order: {
         tokenSell: TokenLike;
         tokenBuy: TokenLike;
         ratio: TokenRatio | WeiRatio;
+=======
+    async isOnchainAuthSigningKeySet(nonce: Nonce = 'committed'): Promise<boolean> {
+        const mainRifRollupContract = this.getRifRollupMainContract();
+
+        const numNonce = await this.getNonce(nonce);
+        try {
+            const onchainAuthFact = await mainRifRollupContract.authFacts(this.address(), numNonce);
+            return onchainAuthFact !== '0x0000000000000000000000000000000000000000000000000000000000000000';
+        } catch (e) {
+            this.modifyEthersError(e);
+        }
+    }
+
+    async onchainAuthSigningKey(
+        nonce: Nonce = 'committed',
+        ethTxOptions?: ethers.providers.TransactionRequest
+    ): Promise<ContractTransaction> {
+        if (!this.signer) {
+            throw new Error('RifRollup signer is required for current pubkey calculation.');
+        }
+
+        const currentPubKeyHash = await this.getCurrentPubKeyHash();
+        const newPubKeyHash = await this.signer.pubKeyHash();
+
+        if (currentPubKeyHash === newPubKeyHash) {
+            throw new Error('Current PubKeyHash is the same as new');
+        }
+
+        const numNonce = await this.getNonce(nonce);
+
+        const mainRifRollupContract = this.getRifRollupMainContract();
+
+        try {
+            return mainRifRollupContract.setAuthPubkeyHash(newPubKeyHash.replace('sync:', '0x'), numNonce, {
+                gasLimit: BigNumber.from('200000'),
+                ...ethTxOptions
+            });
+        } catch (e) {
+            this.modifyEthersError(e);
+        }
+    }
+
+    async getCurrentPubKeyHash(): Promise<PubKeyHash> {
+        return (await this.provider.getState(this.address())).committed.pubKeyHash;
+    }
+
+    async getNonce(nonce: Nonce = 'committed'): Promise<number> {
+        if (nonce === 'committed') {
+            return (await this.provider.getState(this.address())).committed.nonce;
+        } else if (typeof nonce === 'number') {
+            return nonce;
+        }
+    }
+
+    async getAccountId(): Promise<number | undefined> {
+        return (await this.provider.getState(this.address())).id;
+    }
+
+    address(): Address {
+        return this.cachedAddress;
+    }
+
+    async getAccountState(): Promise<AccountState> {
+        return this.provider.getState(this.address());
+    }
+
+    async getNFT(tokenId: number, type: 'committed' | 'verified' = 'committed'): Promise<NFT> {
+        const accountState = await this.getAccountState();
+        let token: NFT;
+        if (type === 'committed') {
+            token = accountState.committed.nfts[tokenId];
+        } else {
+            token = accountState.verified.nfts[tokenId];
+        }
+        return token;
+    }
+
+    async getBalance(token: TokenLike, type: 'committed' | 'verified' = 'committed'): Promise<BigNumber> {
+        const accountState = await this.getAccountState();
+        const tokenSymbol = this.provider.tokenSet.resolveTokenSymbol(token);
+        let balance: BigNumberish;
+        if (type === 'committed') {
+            balance = accountState.committed.balances[tokenSymbol] || '0';
+        } else {
+            balance = accountState.verified.balances[tokenSymbol] || '0';
+        }
+        return BigNumber.from(balance);
+    }
+
+    async getEthereumBalance(token: TokenLike): Promise<BigNumber> {
+        try {
+            return getEthereumBalance(this.ethSigner.provider, this.provider, this.cachedAddress, token);
+        } catch (e) {
+            this.modifyEthersError(e);
+        }
+    }
+
+    async isERC20DepositsApproved(
+        token: TokenLike,
+        erc20ApproveThreshold: BigNumber = ERC20_APPROVE_TRESHOLD
+    ): Promise<boolean> {
+        if (isTokenETH(token)) {
+            throw Error('ETH token does not need approval.');
+        }
+        const tokenAddress = this.provider.tokenSet.resolveTokenAddress(token);
+        const erc20contract = new Contract(tokenAddress, IERC20_INTERFACE, this.ethSigner);
+        try {
+            const currentAllowance = await erc20contract.allowance(
+                this.address(),
+                this.provider.contractAddress.mainContract
+            );
+            return BigNumber.from(currentAllowance).gte(erc20ApproveThreshold);
+        } catch (e) {
+            this.modifyEthersError(e);
+        }
+    }
+
+    async approveERC20TokenDeposits(
+        token: TokenLike,
+        max_erc20_approve_amount: BigNumber = MAX_ERC20_APPROVE_AMOUNT
+    ): Promise<ContractTransaction> {
+        if (isTokenETH(token)) {
+            throw Error('ETH token does not need approval.');
+        }
+        const tokenAddress = this.provider.tokenSet.resolveTokenAddress(token);
+        const erc20contract = new Contract(tokenAddress, IERC20_INTERFACE, this.ethSigner);
+
+        try {
+            return erc20contract.approve(this.provider.contractAddress.mainContract, max_erc20_approve_amount);
+        } catch (e) {
+            this.modifyEthersError(e);
+        }
+    }
+
+    async depositToSyncFromEthereum(deposit: {
+        depositTo: Address;
+        token: TokenLike;
+>>>>>>> 17a4a83 (feat: apply rif specific branding to variable names, package name etc)
         amount: BigNumberish;
         recipient?: Address;
         nonce?: Nonce;
@@ -1151,14 +1807,19 @@ export class Wallet extends AbstractWallet {
         const nonce = order.nonce != null ? await this.getNonce(order.nonce) : await this.getNonce();
         const recipient = order.recipient || this.address();
 
+<<<<<<< HEAD
         let ratio: Ratio;
         const sell = order.tokenSell;
         const buy = order.tokenBuy;
+=======
+        const mainRifRollupContract = this.getRifRollupMainContract();
+>>>>>>> 17a4a83 (feat: apply rif specific branding to variable names, package name etc)
 
         if (!order.ratio[sell] || !order.ratio[buy]) {
             throw new Error(`Wrong tokens in the ratio object: should be ${sell} and ${buy}`);
         }
 
+<<<<<<< HEAD
         if (order.ratio.type == 'Wei') {
             ratio = [order.ratio[sell], order.ratio[buy]];
         } else if (order.ratio.type == 'Token') {
@@ -1166,6 +1827,71 @@ export class Wallet extends AbstractWallet {
                 this.provider.tokenSet.parseToken(sell, order.ratio[sell].toString()),
                 this.provider.tokenSet.parseToken(buy, order.ratio[buy].toString())
             ];
+=======
+        if (isTokenETH(deposit.token)) {
+            try {
+                ethTransaction = await mainRifRollupContract.depositETH(deposit.depositTo, {
+                    value: BigNumber.from(deposit.amount),
+                    gasLimit: BigNumber.from(ETH_RECOMMENDED_DEPOSIT_GAS_LIMIT),
+                    gasPrice,
+                    ...deposit.ethTxOptions
+                });
+            } catch (e) {
+                this.modifyEthersError(e);
+            }
+        } else {
+            const tokenAddress = this.provider.tokenSet.resolveTokenAddress(deposit.token);
+            // ERC20 token deposit
+            const erc20contract = new Contract(tokenAddress, IERC20_INTERFACE, this.ethSigner);
+            let nonce: number;
+            if (deposit.approveDepositAmountForERC20) {
+                try {
+                    const approveTx = await erc20contract.approve(
+                        this.provider.contractAddress.mainContract,
+                        deposit.amount
+                    );
+                    nonce = approveTx.nonce + 1;
+                } catch (e) {
+                    this.modifyEthersError(e);
+                }
+            }
+            const args = [
+                tokenAddress,
+                deposit.amount,
+                deposit.depositTo,
+                {
+                    nonce,
+                    gasPrice,
+                    ...deposit.ethTxOptions
+                } as ethers.providers.TransactionRequest
+            ];
+
+            // We set gas limit only if user does not set it using ethTxOptions.
+            const txRequest = args[args.length - 1] as ethers.providers.TransactionRequest;
+            if (txRequest.gasLimit == null) {
+                try {
+                    const gasEstimate = await mainRifRollupContract.estimateGas.depositERC20(...args).then(
+                        (estimate) => estimate,
+                        () => BigNumber.from('0')
+                    );
+                    const isMainnet = (await this.ethSigner.getChainId()) == 30;
+                    let recommendedGasLimit =
+                        isMainnet && ERC20_DEPOSIT_GAS_LIMIT[tokenAddress]
+                            ? BigNumber.from(ERC20_DEPOSIT_GAS_LIMIT[tokenAddress])
+                            : ERC20_RECOMMENDED_DEPOSIT_GAS_LIMIT;
+                    txRequest.gasLimit = gasEstimate.gte(recommendedGasLimit) ? gasEstimate : recommendedGasLimit;
+                    args[args.length - 1] = txRequest;
+                } catch (e) {
+                    this.modifyEthersError(e);
+                }
+            }
+
+            try {
+                ethTransaction = await mainRifRollupContract.depositERC20(...args);
+            } catch (e) {
+                this.modifyEthersError(e);
+            }
+>>>>>>> 17a4a83 (feat: apply rif specific branding to variable names, package name etc)
         }
 
         const partialOrder = await this.signer.signSyncOrder({
@@ -1180,6 +1906,251 @@ export class Wallet extends AbstractWallet {
             ratio
         });
 
+<<<<<<< HEAD
         return partialOrder;
     }
 }
+=======
+    async resolveAccountId(): Promise<number> {
+        if (this.accountId !== undefined) {
+            return this.accountId;
+        } else {
+            const accountState = await this.getAccountState();
+            if (!accountState.id) {
+                throw new Error("Can't resolve account id from the RifRollup node");
+            }
+            return accountState.id;
+        }
+    }
+
+    async emergencyWithdraw(withdraw: {
+        token: TokenLike;
+        accountId?: number;
+        ethTxOptions?: ethers.providers.TransactionRequest;
+    }): Promise<ETHOperation> {
+        const gasPrice = await this.ethSigner.provider.getGasPrice();
+
+        let accountId: number = withdraw.accountId != null ? withdraw.accountId : await this.resolveAccountId();
+
+        const mainRifRollupContract = this.getRifRollupMainContract();
+
+        const tokenAddress = this.provider.tokenSet.resolveTokenAddress(withdraw.token);
+        try {
+            const ethTransaction = await mainRifRollupContract.requestFullExit(accountId, tokenAddress, {
+                gasLimit: BigNumber.from('500000'),
+                gasPrice,
+                ...withdraw.ethTxOptions
+            });
+            return new ETHOperation(ethTransaction, this.provider);
+        } catch (e) {
+            this.modifyEthersError(e);
+        }
+    }
+
+    async emergencyWithdrawNFT(withdrawNFT: {
+        tokenId: number;
+        accountId?: number;
+        ethTxOptions?: ethers.providers.TransactionRequest;
+    }): Promise<ETHOperation> {
+        const gasPrice = await this.ethSigner.provider.getGasPrice();
+
+        let accountId: number = withdrawNFT.accountId != null ? withdrawNFT.accountId : await this.resolveAccountId();
+
+        const mainRifRollupContract = this.getRifRollupMainContract();
+
+        try {
+            const ethTransaction = await mainRifRollupContract.requestFullExitNFT(accountId, withdrawNFT.tokenId, {
+                gasLimit: BigNumber.from('500000'),
+                gasPrice,
+                ...withdrawNFT.ethTxOptions
+            });
+            return new ETHOperation(ethTransaction, this.provider);
+        } catch (e) {
+            this.modifyEthersError(e);
+        }
+    }
+
+    getRifRollupMainContract() {
+        return new ethers.Contract(
+            this.provider.contractAddress.mainContract,
+            SYNC_MAIN_CONTRACT_INTERFACE,
+            this.ethSigner
+        );
+    }
+
+    private modifyEthersError(error: any): never {
+        if (this.ethSigner instanceof ethers.providers.JsonRpcSigner) {
+            // List of errors that can be caused by user's actions, which have to be forwarded as-is.
+            const correct_errors = [
+                EthersErrorCode.NONCE_EXPIRED,
+                EthersErrorCode.INSUFFICIENT_FUNDS,
+                EthersErrorCode.REPLACEMENT_UNDERPRICED,
+                EthersErrorCode.UNPREDICTABLE_GAS_LIMIT
+            ];
+            if (!correct_errors.includes(error.code)) {
+                // This is an error which we don't expect
+                error.message = `Ethereum smart wallet JSON RPC server returned the following error while executing an operation: "${error.message}". Please contact your smart wallet support for help.`;
+            }
+        }
+
+        throw error;
+    }
+
+    private async setRequiredAccountIdFromServer(actionName: string) {
+        if (this.accountId === undefined) {
+            const accountIdFromServer = await this.getAccountId();
+            if (accountIdFromServer == null) {
+                throw new Error(`Failed to ${actionName}: Account does not exist in the RifRollup network`);
+            } else {
+                this.accountId = accountIdFromServer;
+            }
+        }
+    }
+}
+
+export class ETHOperation {
+    state: 'Sent' | 'Mined' | 'Committed' | 'Verified' | 'Failed';
+    error?: RifRollupTxError;
+    priorityOpId?: BigNumber;
+
+    constructor(public ethTx: ContractTransaction, public rifRollupProvider: SyncProvider) {
+        this.state = 'Sent';
+    }
+
+    async awaitEthereumTxCommit() {
+        if (this.state !== 'Sent') return;
+
+        const txReceipt = await this.ethTx.wait();
+        for (const log of txReceipt.logs) {
+            try {
+                const priorityQueueLog = SYNC_MAIN_CONTRACT_INTERFACE.parseLog(log);
+                if (priorityQueueLog && priorityQueueLog.args.serialId != null) {
+                    this.priorityOpId = priorityQueueLog.args.serialId;
+                }
+            } catch {}
+        }
+        if (!this.priorityOpId) {
+            throw new Error('Failed to parse tx logs');
+        }
+
+        this.state = 'Mined';
+        return txReceipt;
+    }
+
+    async awaitReceipt(): Promise<PriorityOperationReceipt> {
+        this.throwErrorIfFailedState();
+
+        await this.awaitEthereumTxCommit();
+        if (this.state !== 'Mined') return;
+
+        let query: number | string;
+        if (this.rifRollupProvider.providerType === 'RPC') {
+            query = this.priorityOpId.toNumber();
+        } else {
+            query = this.ethTx.hash;
+        }
+        const receipt = await this.rifRollupProvider.notifyPriorityOp(query, 'COMMIT');
+
+        if (!receipt.executed) {
+            this.setErrorState(new RifRollupTxError('Priority operation failed', receipt));
+            this.throwErrorIfFailedState();
+        }
+
+        this.state = 'Committed';
+        return receipt;
+    }
+
+    async awaitVerifyReceipt(): Promise<PriorityOperationReceipt> {
+        await this.awaitReceipt();
+        if (this.state !== 'Committed') return;
+        let query: number | string;
+        if (this.rifRollupProvider.providerType === 'RPC') {
+            query = this.priorityOpId.toNumber();
+        } else {
+            query = this.ethTx.hash;
+        }
+        const receipt = await this.rifRollupProvider.notifyPriorityOp(query, 'VERIFY');
+
+        this.state = 'Verified';
+
+        return receipt;
+    }
+
+    private setErrorState(error: RifRollupTxError) {
+        this.state = 'Failed';
+        this.error = error;
+    }
+
+    private throwErrorIfFailedState() {
+        if (this.state === 'Failed') throw this.error;
+    }
+}
+
+export class Transaction {
+    state: 'Sent' | 'Committed' | 'Verified' | 'Failed';
+    error?: RifRollupTxError;
+
+    constructor(public txData, public txHash: string, public sidechainProvider: SyncProvider) {
+        this.state = 'Sent';
+    }
+
+    async awaitReceipt(): Promise<TransactionReceipt> {
+        this.throwErrorIfFailedState();
+
+        if (this.state !== 'Sent') return;
+
+        const receipt = await this.sidechainProvider.notifyTransaction(this.txHash, 'COMMIT');
+
+        if (!receipt.success) {
+            this.setErrorState(new RifRollupTxError(`RifRollup transaction failed: ${receipt.failReason}`, receipt));
+            this.throwErrorIfFailedState();
+        }
+
+        this.state = 'Committed';
+        return receipt;
+    }
+
+    async awaitVerifyReceipt(): Promise<TransactionReceipt> {
+        await this.awaitReceipt();
+        console.log('Await receipt received, notifying tx: ', this.txHash);
+
+        const receipt = await this.sidechainProvider.notifyTransaction(this.txHash, 'VERIFY');
+        console.log('Notification done');
+
+        this.state = 'Verified';
+        return receipt;
+    }
+
+    private setErrorState(error: RifRollupTxError) {
+        this.state = 'Failed';
+        this.error = error;
+    }
+
+    private throwErrorIfFailedState() {
+        if (this.state === 'Failed') throw this.error;
+    }
+}
+
+export async function submitSignedTransaction(
+    signedTx: SignedTransaction,
+    provider: SyncProvider,
+    fastProcessing?: boolean
+): Promise<Transaction> {
+    const transactionHash = await provider.submitTx(signedTx.tx, signedTx.ethereumSignature, fastProcessing);
+    return new Transaction(signedTx, transactionHash, provider);
+}
+
+export async function submitSignedTransactionsBatch(
+    provider: SyncProvider,
+    signedTxs: SignedTransaction[],
+    ethSignatures?: TxEthSignature[]
+): Promise<Transaction[]> {
+    const transactionHashes = await provider.submitTxsBatch(
+        signedTxs.map((tx) => {
+            return { tx: tx.tx, signature: tx.ethereumSignature };
+        }),
+        ethSignatures
+    );
+    return transactionHashes.map((txHash, idx) => new Transaction(signedTxs[idx], txHash, provider));
+}
+>>>>>>> 17a4a83 (feat: apply rif specific branding to variable names, package name etc)

@@ -22,9 +22,9 @@ import {
 } from './types';
 import { rescueHashOrders } from './crypto';
 
-// Max number of tokens for the current version, it is determined by the zkSync circuit implementation.
+// Max number of tokens for the current version, it is determined by the rifRollup circuit implementation.
 const MAX_NUMBER_OF_TOKENS = Math.pow(2, 31);
-// Max number of accounts for the current version, it is determined by the zkSync circuit implementation.
+// Max number of accounts for the current version, it is determined by the rifRollup circuit implementation.
 const MAX_NUMBER_OF_ACCOUNTS = Math.pow(2, 24);
 
 export const MAX_TIMESTAMP = 4294967295;
@@ -438,7 +438,7 @@ export function getChangePubkeyLegacyMessage(pubKeyHash: PubKeyHash, nonce: numb
     const msgAccId = utils.hexlify(serializeAccountId(accountId));
     const msgPubKeyHash = utils.hexlify(serializeAddress(pubKeyHash)).substr(2);
     const message =
-        `Register zkSync pubkey:\n\n` +
+        `Register rifRollup pubkey:\n\n` +
         `${msgPubKeyHash}\n` +
         `nonce: ${msgNonce}\n` +
         `account id: ${msgAccId}\n\n` +
@@ -450,12 +450,12 @@ export function getToggle2FAMessage(require2FA: boolean, timestamp: number, pubK
     let message: string;
     if (require2FA) {
         message =
-            `By signing this message, you are opting into Two-factor Authentication protection by the zkSync Server.\n` +
+            `By signing this message, you are opting into Two-factor Authentication protection by the rifRollup Server.\n` +
             `Transactions now require signatures by both your L1 and L2 private key.\n` +
             `Timestamp: ${timestamp}`;
     } else {
         message =
-            `You are opting out of Two-factor Authentication protection by the zkSync Server.\n` +
+            `You are opting out of Two-factor Authentication protection by the rifRollup Server.\n` +
             `Transactions now only require signatures by your L2 private key.\n` +
             `BY SIGNING THIS MESSAGE, YOU ARE TRUSTING YOUR WALLET CLIENT TO KEEP YOUR L2 PRIVATE KEY SAFE!\n` +
             `Timestamp: ${timestamp}`;
@@ -828,7 +828,7 @@ export function serializeForcedExit(forcedExit: ForcedExit): Uint8Array {
 }
 
 /**
- * Encodes the transaction data as the byte sequence according to the zkSync protocol.
+ * Encodes the transaction data as the byte sequence according to the rifRollup protocol.
  * @param tx A transaction to serialize.
  */
 export async function serializeTx(
@@ -930,7 +930,7 @@ export async function getPendingBalance(
     address: Address,
     token: TokenLike
 ): Promise<BigNumberish> {
-    const zksyncContract = new Contract(
+    const rifRollupContract = new Contract(
         syncProvider.contractAddress.mainContract,
         SYNC_MAIN_CONTRACT_INTERFACE,
         ethProvider
@@ -938,7 +938,7 @@ export async function getPendingBalance(
 
     const tokenAddress = syncProvider.tokenSet.resolveTokenAddress(token);
 
-    return zksyncContract.getPendingBalance(address, tokenAddress);
+    return rifRollupContract.getPendingBalance(address, tokenAddress);
 }
 
 export async function getTxHash(

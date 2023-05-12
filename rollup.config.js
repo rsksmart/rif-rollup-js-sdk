@@ -22,7 +22,7 @@ export default [
         output: {
             file: 'dist/main.js',
             format: 'iife',
-            name: 'zksync',
+            name: 'rif_rollup',
             globals: {
                 ethers: 'ethers'
             }
