@@ -4,7 +4,8 @@ import { loadTestConfig } from 'reading-tool';
 import * as zkUtils from '../src/utils';
 
 const testConfig = loadTestConfig(false);
-const provider = new ethers.providers.JsonRpcProvider(process.env.ETH_CLIENT_WEB3_URL.split(',')[0]);
+const providerUrl = "http://localhost:4444";
+const provider = new ethers.providers.JsonRpcProvider(providerUrl.split(',')[0]);
 const ethSigner = new ethers.Wallet(testConfig.eip1271.owner_private_key, provider);
 
 describe('EIP1271 signature check', function () {
