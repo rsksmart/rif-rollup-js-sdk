@@ -22,7 +22,7 @@ export default [
         output: {
             file: 'dist/main.js',
             format: 'iife',
-            name: 'rif_rollup',
+            name: 'rif-rollup',
             globals: {
                 ethers: 'ethers'
             }

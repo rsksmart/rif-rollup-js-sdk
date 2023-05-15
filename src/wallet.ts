@@ -36,6 +36,7 @@ import { AbstractWallet } from './abstract-wallet';
 export { Transaction, ETHOperation, submitSignedTransaction, submitSignedTransactionsBatch } from './operations';
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 export class Wallet extends AbstractWallet {
     protected constructor(
         public _ethSigner: ethers.Signer,
@@ -43,6 +44,9 @@ export class Wallet extends AbstractWallet {
         cachedAddress: Address,
 =======
 export class RifRollupTxError extends Error {
+=======
+export class RIFRollupTxError extends Error {
+>>>>>>> 32dd5ba (fix: use better naming nomenclature)
     constructor(message: string, public value: PriorityOperationReceipt | TransactionReceipt) {
         super(message);
     }
@@ -262,7 +266,7 @@ export class Wallet {
         validUntil: number;
     }): Promise<Transfer> {
         if (!this.signer) {
-            throw new Error('RifRollup signer is required for sending rifRollup transactions.');
+            throw new Error('RIF Rollup signer is required for sending RIF Rollup transactions.');
         }
 
         await this.setRequiredAccountIdFromServer('Transfer funds');
@@ -463,7 +467,7 @@ export class Wallet {
 =======
     }): Promise<ForcedExit> {
         if (!this.signer) {
-            throw new Error('RifRollup signer is required for sending rifRollup transactions.');
+            throw new Error('RIF Rollup signer is required for sending RIF Rollup transactions.');
         }
         await this.setRequiredAccountIdFromServer('perform a Forced Exit');
 >>>>>>> 17a4a83 (feat: apply rif specific branding to variable names, package name etc)
@@ -824,7 +828,7 @@ export class Wallet {
         }[]
     ): Promise<Transaction[]> {
         if (!this.signer) {
-            throw new Error('RifRollup signer is required for sending rifRollup transactions.');
+            throw new Error('RIF Rollup signer is required for sending RIF Rollup transactions.');
         }
 
         if (transfers.length == 0) return [];
@@ -933,7 +937,7 @@ export class Wallet {
         validUntil?: number;
     }): Promise<Order> {
         if (!this.signer) {
-            throw new Error('RifRollup signer is required for signing an order');
+            throw new Error('RIF Rollup signer is required for signing an order');
         }
         await this.setRequiredAccountIdFromServer('Swap order');
         const nonce = order.nonce != null ? await this.getNonce(order.nonce) : await this.getNonce();
@@ -999,7 +1003,7 @@ export class Wallet {
         fee: BigNumberish;
     }): Promise<Swap> {
         if (!this.signer) {
-            throw new Error('RifRollup signer is required for swapping funds');
+            throw new Error('RIF Rollup signer is required for swapping funds');
         }
         await this.setRequiredAccountIdFromServer('Swap submission');
         const feeToken = this.provider.tokenSet.resolveTokenId(swap.feeToken);
@@ -1096,7 +1100,7 @@ export class Wallet {
         nonce: number;
     }): Promise<MintNFT> {
         if (!this.signer) {
-            throw new Error('RifRollup signer is required for sending rifRollup transactions.');
+            throw new Error('RIF Rollup signer is required for sending RIF Rollup transactions.');
         }
         await this.setRequiredAccountIdFromServer('MintNFT');
 
@@ -1124,7 +1128,7 @@ export class Wallet {
         validUntil: number;
     }): Promise<WithdrawNFT> {
         if (!this.signer) {
-            throw new Error('RifRollup signer is required for sending rifRollup transactions.');
+            throw new Error('RIF Rollup signer is required for sending RIF Rollup transactions.');
         }
         await this.setRequiredAccountIdFromServer('WithdrawNFT');
 
@@ -1159,7 +1163,7 @@ export class Wallet {
         validUntil: number;
     }): Promise<Withdraw> {
         if (!this.signer) {
-            throw new Error('RifRollup signer is required for sending rifRollup transactions.');
+            throw new Error('RIF Rollup signer is required for sending RIF Rollup transactions.');
         }
         await this.setRequiredAccountIdFromServer('Withdraw funds');
 
@@ -1351,7 +1355,7 @@ export class Wallet {
 
     async isSigningKeySet(): Promise<boolean> {
         if (!this.signer) {
-            throw new Error('RifRollup signer is required for current pubkey calculation.');
+            throw new Error('RIF Rollup signer is required for current pubkey calculation.');
         }
         const currentPubKeyHash = await this.getCurrentPubKeyHash();
         const signerPubKeyHash = await this.signer.pubKeyHash();
@@ -1369,7 +1373,7 @@ export class Wallet {
         validUntil: number;
     }): Promise<ChangePubKey> {
         if (!this.signer) {
-            throw new Error('RifRollup signer is required for current pubkey calculation.');
+            throw new Error('RIF Rollup signer is required for current pubkey calculation.');
         }
 
         const feeTokenId = this.provider.tokenSet.resolveTokenId(changePubKey.feeToken);
@@ -1674,7 +1678,7 @@ export class Wallet {
         ethTxOptions?: ethers.providers.TransactionRequest
     ): Promise<ContractTransaction> {
         if (!this.signer) {
-            throw new Error('RifRollup signer is required for current pubkey calculation.');
+            throw new Error('RIF Rollup signer is required for current pubkey calculation.');
         }
 
         const currentPubKeyHash = await this.getCurrentPubKeyHash();
@@ -1917,7 +1921,7 @@ export class Wallet {
         } else {
             const accountState = await this.getAccountState();
             if (!accountState.id) {
-                throw new Error("Can't resolve account id from the RifRollup node");
+                throw new Error("Can't resolve account id from the RIF Rollup node");
             }
             return accountState.id;
         }
@@ -2000,7 +2004,7 @@ export class Wallet {
         if (this.accountId === undefined) {
             const accountIdFromServer = await this.getAccountId();
             if (accountIdFromServer == null) {
-                throw new Error(`Failed to ${actionName}: Account does not exist in the RifRollup network`);
+                throw new Error(`Failed to ${actionName}: Account does not exist in the RIF Rollup network`);
             } else {
                 this.accountId = accountIdFromServer;
             }
@@ -2010,7 +2014,7 @@ export class Wallet {
 
 export class ETHOperation {
     state: 'Sent' | 'Mined' | 'Committed' | 'Verified' | 'Failed';
-    error?: RifRollupTxError;
+    error?: RIFRollupTxError;
     priorityOpId?: BigNumber;
 
     constructor(public ethTx: ContractTransaction, public rifRollupProvider: SyncProvider) {
@@ -2052,7 +2056,7 @@ export class ETHOperation {
         const receipt = await this.rifRollupProvider.notifyPriorityOp(query, 'COMMIT');
 
         if (!receipt.executed) {
-            this.setErrorState(new RifRollupTxError('Priority operation failed', receipt));
+            this.setErrorState(new RIFRollupTxError('Priority operation failed', receipt));
             this.throwErrorIfFailedState();
         }
 
@@ -2076,7 +2080,7 @@ export class ETHOperation {
         return receipt;
     }
 
-    private setErrorState(error: RifRollupTxError) {
+    private setErrorState(error: RIFRollupTxError) {
         this.state = 'Failed';
         this.error = error;
     }
@@ -2088,7 +2092,7 @@ export class ETHOperation {
 
 export class Transaction {
     state: 'Sent' | 'Committed' | 'Verified' | 'Failed';
-    error?: RifRollupTxError;
+    error?: RIFRollupTxError;
 
     constructor(public txData, public txHash: string, public sidechainProvider: SyncProvider) {
         this.state = 'Sent';
@@ -2102,7 +2106,7 @@ export class Transaction {
         const receipt = await this.sidechainProvider.notifyTransaction(this.txHash, 'COMMIT');
 
         if (!receipt.success) {
-            this.setErrorState(new RifRollupTxError(`RifRollup transaction failed: ${receipt.failReason}`, receipt));
+            this.setErrorState(new RIFRollupTxError(`RIF Rollup transaction failed: ${receipt.failReason}`, receipt));
             this.throwErrorIfFailedState();
         }
 
@@ -2121,7 +2125,7 @@ export class Transaction {
         return receipt;
     }
 
-    private setErrorState(error: RifRollupTxError) {
+    private setErrorState(error: RIFRollupTxError) {
         this.state = 'Failed';
         this.error = error;
     }
