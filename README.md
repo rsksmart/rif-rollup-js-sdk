@@ -7,4 +7,4 @@ This document is a description of the JS library that can be used to interact wi
 
 ## Usage
 
-Full reference on how to use the library can be found [here](https://zksync.io/api/sdk/js/).
+Full reference on how to use the library can be found [here](https://github.com/rsksmart/rif-rollup-js-sdk-docs#readme).
