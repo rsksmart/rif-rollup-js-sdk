@@ -1,7 +1,11 @@
 import { expect } from 'chai';
 import * as ethers from 'ethers';
 import { loadTestConfig } from './reading-tool';
+<<<<<<< HEAD
 import * as zkUtils from '../src/utils';
+=======
+import * as RIFRollupUtils from '../src/utils';
+>>>>>>> 0d6b954 (fix: fix issue of reading path incorrectly)
 
 const testConfig = loadTestConfig(false);
 const providerUrl = "http://localhost:4444";
@@ -12,10 +16,10 @@ describe('EIP1271 signature check', function () {
     it('Test EIP1271 signature', async () => {
         const initialMessage = 'hello-world';
         const initialMessageBytes = ethers.utils.toUtf8Bytes(initialMessage);
-        const message = zkUtils.getSignedBytesFromMessage(initialMessage, false);
+        const message = RIFRollupUtils.getSignedBytesFromMessage(initialMessage, false);
 
-        const signature = await zkUtils.signMessagePersonalAPI(ethSigner, message);
-        const signatureValid = await zkUtils.verifyERC1271Signature(
+        const signature = await RIFRollupUtils.signMessagePersonalAPI(ethSigner, message);
+        const signatureValid = await RIFRollupUtils.verifyERC1271Signature(
             testConfig.eip1271.contract_address,
             initialMessageBytes,
             signature,

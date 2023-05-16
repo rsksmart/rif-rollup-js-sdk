@@ -2,7 +2,11 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 function configPath(postfix: string) {
+<<<<<<< HEAD
     return path.join(__dirname, `etc/test_config/${postfix}`);
+=======
+    return `tests/etc/test_config/${postfix}`;
+>>>>>>> 0d6b954 (fix: fix issue of reading path incorrectly)
 }
 
 function loadConfig(filepath: string) {
@@ -46,7 +50,11 @@ export function loadTestVectorsConfig() {
 }
 
 export function getTokens(network: string) {
+<<<<<<< HEAD
     const configPath = path.join(__dirname, `etc/tokens/${network}.json`);
+=======
+    const configPath = `tests/etc/tokens/${network}.json`;
+>>>>>>> 0d6b954 (fix: fix issue of reading path incorrectly)
     return JSON.parse(
         fs.readFileSync(configPath, {
             encoding: 'utf-8'
@@ -55,7 +63,12 @@ export function getTokens(network: string) {
 }
 
 export function getTokenList(source: string) {
+<<<<<<< HEAD
     const configPath = path.join(__dirname, `etc/token-lists/${source}.json`);
+=======
+    const configPath = `tests/etc/token-lists/${source}.json`;
+    console.log(configPath);
+>>>>>>> 0d6b954 (fix: fix issue of reading path incorrectly)
     return JSON.parse(
         fs.readFileSync(configPath, {
             encoding: 'utf-8'

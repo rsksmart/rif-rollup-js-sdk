@@ -17,8 +17,8 @@ describe('Provider tests', function () {
         for (const token of tokens) {
             const resolvedToken = {
                 symbol: provider.tokenSet.resolveTokenSymbol(token.symbol),
-                decimals: provider.tokenSet.resolveTokenDecimals(token.symbol),
-                address: provider.tokenSet.resolveTokenAddress(token.symbol),
+                decimals: provider.tokenSet.resolveTokenDecimals(token.decimals),
+                address: provider.tokenSet.resolveTokenAddress(token.address),
                 // name is not stored in tokenSet, so we just have to copy it
                 name: token.name
             };
