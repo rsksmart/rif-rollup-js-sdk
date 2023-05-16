@@ -25,7 +25,8 @@ export default [
             name: 'rif-rollup',
             globals: {
                 ethers: 'ethers'
-            }
+            },
+            extended: true
         },
         external: ['ethers'],
         plugins: [
