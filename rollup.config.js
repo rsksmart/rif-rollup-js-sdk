@@ -26,7 +26,7 @@ export default [
             globals: {
                 ethers: 'ethers'
             },
-            extended: true
+            extend: true
         },
         external: ['ethers'],
         plugins: [
