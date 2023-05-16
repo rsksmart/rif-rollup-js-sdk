@@ -3,10 +3,14 @@ import * as path from 'path';
 
 function configPath(postfix: string) {
 <<<<<<< HEAD
+<<<<<<< HEAD
     return path.join(__dirname, `etc/test_config/${postfix}`);
 =======
     return `tests/etc/test_config/${postfix}`;
 >>>>>>> 0d6b954 (fix: fix issue of reading path incorrectly)
+=======
+    return path.join(__dirname, `etc/test_config/${postfix}`);
+>>>>>>> 58b33aa (fix: use absolute path method for path resolution)
 }
 
 function loadConfig(filepath: string) {
@@ -51,10 +55,14 @@ export function loadTestVectorsConfig() {
 
 export function getTokens(network: string) {
 <<<<<<< HEAD
+<<<<<<< HEAD
     const configPath = path.join(__dirname, `etc/tokens/${network}.json`);
 =======
     const configPath = `tests/etc/tokens/${network}.json`;
 >>>>>>> 0d6b954 (fix: fix issue of reading path incorrectly)
+=======
+    const configPath = path.join(__dirname, `etc/tokens/${network}.json`);
+>>>>>>> 58b33aa (fix: use absolute path method for path resolution)
     return JSON.parse(
         fs.readFileSync(configPath, {
             encoding: 'utf-8'
@@ -64,9 +72,13 @@ export function getTokens(network: string) {
 
 export function getTokenList(source: string) {
 <<<<<<< HEAD
+<<<<<<< HEAD
     const configPath = path.join(__dirname, `etc/token-lists/${source}.json`);
 =======
     const configPath = `tests/etc/token-lists/${source}.json`;
+=======
+    const configPath = path.join(__dirname, `tests/etc/token-lists/${source}.json`);
+>>>>>>> 58b33aa (fix: use absolute path method for path resolution)
     console.log(configPath);
 >>>>>>> 0d6b954 (fix: fix issue of reading path incorrectly)
     return JSON.parse(
