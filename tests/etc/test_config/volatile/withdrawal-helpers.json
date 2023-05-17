@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"multicall_address":"0xDA7Ce79725418F4F6E13Bf5F520C89Cec5f6A974","revert_receive_address":"0x83C5541A6c8D2dBAD642f385d8d06Ca9B6C731ee"}
+=======
+{"multicall_address":"0x8901a2Bbf639bFD21A97004BA4D7aE2BD00B8DA8","revert_receive_address":"0x1Af2844A588759D0DE58abD568ADD96BB8B3B6D8"}
+>>>>>>> 4fd642f (fix: remove unnecesary gitignore file)
