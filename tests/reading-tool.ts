@@ -1,7 +1,8 @@
 import * as fs from 'fs';
-// import * as path from 'path';
+import * as path from 'path';
 
 function configPath(postfix: string) {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -15,6 +16,9 @@ function configPath(postfix: string) {
 =======
     return `tests/etc/test_config/${postfix}`;
 >>>>>>> 7b21bde (fix: use relative path structure)
+=======
+    return path.join(__dirname, `etc/test_config/${postfix}`);
+>>>>>>> 08596b9 (fix: use relative path structure)
 }
 
 function loadConfig(filepath: string) {
@@ -61,6 +65,7 @@ export function getTokens(network: string) {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     const configPath = path.join(__dirname, `etc/tokens/${network}.json`);
 =======
     const configPath = `tests/etc/tokens/${network}.json`;
@@ -71,6 +76,9 @@ export function getTokens(network: string) {
 =======
     const configPath = `tests/etc/tokens/${network}.json`;
 >>>>>>> 7b21bde (fix: use relative path structure)
+=======
+    const configPath = path.join(__dirname, `etc/tokens/${network}.json`);
+>>>>>>> 08596b9 (fix: use relative path structure)
     return JSON.parse(
         fs.readFileSync(configPath, {
             encoding: 'utf-8'
@@ -79,6 +87,7 @@ export function getTokens(network: string) {
 }
 
 export function getTokenList(source: string) {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -93,6 +102,9 @@ export function getTokenList(source: string) {
 =======
     const configPath = `tests/etc/token-lists/${source}.json`;
 >>>>>>> 7b21bde (fix: use relative path structure)
+=======
+    const configPath = path.join(__dirname, `etc/token-lists/${source}.json`);
+>>>>>>> 08596b9 (fix: use relative path structure)
     return JSON.parse(
         fs.readFileSync(configPath, {
             encoding: 'utf-8'
