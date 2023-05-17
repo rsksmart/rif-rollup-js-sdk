@@ -18,7 +18,6 @@ jobs:
         node-version: 14.x
     - run: npm i
     - run: npm run tests
-      working-directory: tests
     - run: npm run lint:ts
     - run: npm run build
     - name: Coveralls
