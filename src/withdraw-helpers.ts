@@ -35,8 +35,6 @@ function getMulticallAddressByNetwork(network: Network) {
             return '0x9e469e1fc7fb4c5d17897b68eaf1afc9df39f103';
         case 'mainnet':
             return '0x6c62bf5440de2cb157205b15c424bceb5c3368f5';
-        case 'mainnet-zk':
-            return '0xeefba1e63905ef1d7acba5a8513c70307c1ce441';
         default:
             throw new Error('There is no default multicall contract address for this network');
     }
@@ -51,11 +49,11 @@ Wallet.prototype.withdrawPendingBalance = async function (
     token: TokenLike,
     amount?: BigNumberish
 ): Promise<ContractTransaction> {
-    checkEthProvider(this.ethSigner);
+    checkEthProvider(this.ethSigner());
 
     const zksyncContract = this.getZkSyncMainContract();
 
-    const gasPrice = await this.ethSigner.getGasPrice();
+    const gasPrice = await this.ethSigner().getGasPrice();
 
     const tokenAddress = this.provider.tokenSet.resolveTokenAddress(token);
     const withdrawAmount = amount ? amount : await zksyncContract.getPendingBalance(from, tokenAddress);
@@ -73,7 +71,7 @@ Wallet.prototype.withdrawPendingBalances = async function (
     multicallParams: MulticallParams,
     amounts?: BigNumberish[]
 ): Promise<ContractTransaction> {
-    checkEthProvider(this.ethSigner);
+    checkEthProvider(this.ethSigner());
 
     if (tokens.length != addresses.length) {
         throw new Error('The array of addresses and the tokens should be the same length');
@@ -82,7 +80,7 @@ Wallet.prototype.withdrawPendingBalances = async function (
     const multicallAddress = multicallParams.address || getMulticallAddressByNetwork(multicallParams.network);
 
     const zksyncContract = this.getZkSyncMainContract();
-    const gasPrice = await this.ethSigner.getGasPrice();
+    const gasPrice = await this.ethSigner().getGasPrice();
 
     const tokensAddresses = tokens.map((token) => this.provider.tokenSet.resolveTokenAddress(token));
 
@@ -107,7 +105,7 @@ Wallet.prototype.withdrawPendingBalances = async function (
         return [zksyncContract.address, callData];
     });
 
-    const multicallContract = new Contract(multicallAddress, MULTICALL_INTERFACE, this.ethSigner);
+    const multicallContract = new Contract(multicallAddress, MULTICALL_INTERFACE, this.ethSigner());
 
     return multicallContract.aggregate(calls, {
         gasLimit: multicallParams.gasLimit || BigNumber.from('300000'),

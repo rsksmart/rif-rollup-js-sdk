@@ -1,12 +1,13 @@
 import * as fs from 'fs';
+import * as path from 'path';
 
 function configPath(postfix: string) {
-    return `etc/test_config/${postfix}`;
+    return path.join(__dirname, `etc/test_config/${postfix}`);
 }
 
-function loadConfig(path: string) {
+function loadConfig(filepath: string) {
     return JSON.parse(
-        fs.readFileSync(path, {
+        fs.readFileSync(filepath, {
             encoding: 'utf-8'
         })
     );
@@ -45,7 +46,7 @@ export function loadTestVectorsConfig() {
 }
 
 export function getTokens(network: string) {
-    const configPath = `etc/tokens/${network}.json`;
+    const configPath = path.join(__dirname, `etc/tokens/${network}.json`);
     return JSON.parse(
         fs.readFileSync(configPath, {
             encoding: 'utf-8'
@@ -54,8 +55,7 @@ export function getTokens(network: string) {
 }
 
 export function getTokenList(source: string) {
-    const configPath = `etc/token-lists/${source}.json`;
-    console.log(configPath);
+    const configPath = path.join(__dirname, `etc/token-lists/${source}.json`);
     return JSON.parse(
         fs.readFileSync(configPath, {
             encoding: 'utf-8'

@@ -15,7 +15,7 @@ import {
     serializeTx
 } from '../src/utils';
 import { privateKeyFromSeed, signTransactionBytes } from '../src/crypto';
-import { loadTestVectorsConfig } from 'reading-tool';
+import { loadTestVectorsConfig } from './reading-tool';
 import { MintNFT, WithdrawNFT } from '../src/types';
 
 const vectors = loadTestVectorsConfig();
