@@ -16,15 +16,24 @@ export type TotalFee = Map<TokenLike, BigNumber>;
 
 export type Nonce = number | 'committed';
 
-export type Network =
-    | 'localhost'
-    | 'mainnet'
-    | 'testnet'
-    | 'rinkeby-beta'
-    | 'ropsten-beta'
-    | 'rinkeby'
-    | 'ropsten'
-    | 'mainnet-zk';
+export type Network = 'localhost' | 'testnet' | 'mainnet';
+
+const MAINNET_NETWORK_CHAIN_ID = 30;
+const TESTNET_NETWORK_CHAIN_ID = 31;
+const LOCALHOST_NETWORK_CHAIN_ID = 33;
+
+export function l1ChainId(network?: Network): number {
+    if (network === 'mainnet') {
+        return MAINNET_NETWORK_CHAIN_ID;
+    }
+    if (network === 'testnet') {
+        return TESTNET_NETWORK_CHAIN_ID;
+    }
+    if (network === 'localhost') {
+        return LOCALHOST_NETWORK_CHAIN_ID;
+    }
+    throw new Error('Unsupported network');
+}
 
 export interface Create2Data {
     creatorAddress: string;
