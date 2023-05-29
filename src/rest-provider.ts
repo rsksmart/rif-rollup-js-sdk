@@ -82,7 +82,7 @@ export class RestProvider extends SyncProvider {
     }
 
     static async newProvider(
-        address: string = 'http://127.0.0.1:3001/api/v0.2',
+        address: string = 'https://127.0.0.1:3001/api/v0.2',
         pollIntervalMilliSecs?: number,
         network?: Network
     ): Promise<RestProvider> {
