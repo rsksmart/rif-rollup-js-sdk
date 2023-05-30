@@ -79,19 +79,14 @@ Wallet.prototype.withdrawPendingBalances = async function (
 
     const multicallAddress = multicallParams.address || getMulticallAddressByNetwork(multicallParams.network);
 
-<<<<<<< HEAD
-    const zksyncContract = this.getZkSyncMainContract();
-    const gasPrice = await this.ethSigner().getGasPrice();
-=======
     const rifRollupContract = this.getRifRollupMainContract();
-    const gasPrice = await this.ethSigner.getGasPrice();
->>>>>>> 17a4a83 (feat: apply rif specific branding to variable names, package name etc)
+    const gasPrice = await this.ethSigner().getGasPrice();
 
     const tokensAddresses = tokens.map((token) => this.provider.tokenSet.resolveTokenAddress(token));
 
     if (!amounts) {
         const pendingWithdrawalsPromises = addresses.map((address, i) =>
-            rifRollupContract.getPendingBalance(address, tokensAddresses[i])
+        rifRollupContract.getPendingBalance(address, tokensAddresses[i])
         );
         amounts = await Promise.all(pendingWithdrawalsPromises);
     }

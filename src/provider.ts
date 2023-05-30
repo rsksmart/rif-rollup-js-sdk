@@ -22,10 +22,10 @@ import { isTokenETH, sleep, TokenSet } from './utils';
 import {
     Governance,
     GovernanceFactory,
-    ZkSync,
-    ZkSyncFactory,
-    ZkSyncNFTFactory,
-    ZkSyncNFTFactoryFactory
+    ZkSync as RifRollup,
+    ZkSyncFactory as RifRollupFactory,
+    ZkSyncNFTFactory as RifRollupNFTFactory,
+    ZkSyncNFTFactoryFactory as RifRollupNFTFactoryFactory
 } from './typechain';
 
 import { SyncProvider } from './provider-interface';
@@ -315,8 +315,8 @@ export class Provider extends SyncProvider {
 
 export class RSKProxy {
     private governanceContract: Governance;
-    private rifRollupContract: ZkSync;
-    private rifRollupNFTFactory: ZkSyncNFTFactory;
+    private rifRollupContract: RifRollup;
+    private rifRollupNFTFactory: RifRollupNFTFactory;
     // Needed for typechain to work
     private dummySigner: ethers.VoidSigner;
 
@@ -326,7 +326,7 @@ export class RSKProxy {
         const governanceFactory = new GovernanceFactory(this.dummySigner);
         this.governanceContract = governanceFactory.attach(contractAddress.govContract);
 
-        const rifRollupFactory = new ZkSyncFactory(this.dummySigner);
+        const rifRollupFactory = new RifRollupFactory(this.dummySigner);
         this.rifRollupContract = rifRollupFactory.attach(contractAddress.mainContract);
     }
 
@@ -334,24 +334,24 @@ export class RSKProxy {
         return this.governanceContract;
     }
 
-    getRifRollupContract(): ZkSync {
+    getRifRollupContract(): RifRollup {
         return this.rifRollupContract;
     }
 
     // This method is very helpful for those who have already fetched the
     // default factory and want to avoid asynchorouns execution from now on
-    getCachedNFTDefaultFactory(): ZkSyncNFTFactory | undefined {
+    getCachedNFTDefaultFactory(): RifRollupNFTFactory | undefined {
         return this.rifRollupNFTFactory;
     }
 
-    async getDefaultNFTFactory(): Promise<ZkSyncNFTFactory> {
+    async getDefaultNFTFactory(): Promise<RifRollupNFTFactory> {
         if (this.rifRollupNFTFactory) {
             return this.rifRollupNFTFactory;
         }
 
         const nftFactoryAddress = await this.governanceContract.defaultFactory();
 
-        const nftFactory = new ZkSyncNFTFactoryFactory(this.dummySigner);
+        const nftFactory = new RifRollupNFTFactoryFactory(this.dummySigner);
         this.rifRollupNFTFactory = nftFactory.attach(nftFactoryAddress);
 
         return this.rifRollupNFTFactory;

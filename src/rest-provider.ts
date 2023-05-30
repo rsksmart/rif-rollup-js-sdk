@@ -101,7 +101,7 @@ export class RestProvider extends SyncProvider {
             return response.result;
         } else {
             throw new RESTError(
-                `zkSync API response error: errorType: ${response.error.errorType};` +
+                `RIF Rollup API response error: errorType: ${response.error.errorType};` +
                     ` code ${response.error.code}; message: ${response.error.message}`,
                 response.error
             );
@@ -246,7 +246,7 @@ export class RestProvider extends SyncProvider {
         address: types.Address,
         tokenLike: types.TokenLike
     ): Promise<Response<types.FeeRest>> {
-        const rawFee = await this.post<{ gasFee: string; zkpFee: string; totalFee: string }>(`${this.address}/fee`, {
+        const rawFee = await this.post<{ gasFee: string; rifRollupPFee: string; totalFee: string }>(`${this.address}/fee`, {
             txType,
             address,
             tokenLike
@@ -259,7 +259,7 @@ export class RestProvider extends SyncProvider {
                 error: null,
                 result: {
                     gasFee: BigNumber.from(rawFee.result.gasFee),
-                    zkpFee: BigNumber.from(rawFee.result.zkpFee),
+                    zkpFee: BigNumber.from(rawFee.result.rifRollupPFee),
                     totalFee: BigNumber.from(rawFee.result.totalFee)
                 }
             };
@@ -289,7 +289,7 @@ export class RestProvider extends SyncProvider {
         }[],
         tokenLike: types.TokenLike
     ): Promise<Response<types.FeeRest>> {
-        const rawFee = await this.post<{ gasFee: string; zkpFee: string; totalFee: string }>(
+        const rawFee = await this.post<{ gasFee: string; rifRollupPFee: string; totalFee: string }>(
             `${this.address}/fee/batch`,
             { transactions, tokenLike }
         );
@@ -301,7 +301,7 @@ export class RestProvider extends SyncProvider {
                 error: null,
                 result: {
                     gasFee: BigNumber.from(rawFee.result.gasFee),
-                    zkpFee: BigNumber.from(rawFee.result.zkpFee),
+                    zkpFee: BigNumber.from(rawFee.result.rifRollupPFee),
                     totalFee: BigNumber.from(rawFee.result.totalFee)
                 }
             };

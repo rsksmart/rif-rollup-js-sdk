@@ -1,10 +1,6 @@
 export { Wallet, Transaction, ETHOperation, submitSignedTransaction, submitSignedTransactionsBatch } from './wallet';
-<<<<<<< HEAD
 export { RemoteWallet } from './remote-wallet';
-export { Provider, ETHProxy, getDefaultProvider } from './provider';
-=======
 export { Provider, RSKProxy, getDefaultProvider } from './provider';
->>>>>>> a2c3774 (refactor: more rif naming nomenclature use)
 export { RestProvider, getDefaultRestProvider } from './rest-provider';
 export { SyncProvider } from './provider-interface';
 export { Signer, Create2WalletSigner, No2FAWalletSigner } from './signer';

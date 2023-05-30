@@ -324,7 +324,7 @@ export class Signer {
             const network = await ethSigner.provider.getNetwork();
             chainID = network.chainId;
         }
-        let message = 'Access zkSync account.\n\nOnly sign this message for a trusted client!';
+        let message = 'Access RIF Rollup account.\n\nOnly sign this message for a trusted client!';
         if (chainID !== 30) {
             message += `\nChain ID: ${chainID}.`;
         }
@@ -343,7 +343,7 @@ export class Create2WalletSigner extends ethers.Signer {
     // salt for create2 function call
     public readonly salt: string;
     constructor(
-        public zkSyncPubkeyHash: string,
+        public rifRollupSyncPubkeyHash: string,
         public create2WalletData: Create2Data,
         provider?: ethers.providers.Provider
     ) {
@@ -353,7 +353,7 @@ export class Create2WalletSigner extends ethers.Signer {
             value: provider,
             writable: false
         });
-        const create2Info = utils.getCREATE2AddressAndSalt(zkSyncPubkeyHash, create2WalletData);
+        const create2Info = utils.getCREATE2AddressAndSalt(rifRollupSyncPubkeyHash, create2WalletData);
         this.address = create2Info.address;
         this.salt = create2Info.salt;
     }
@@ -374,7 +374,7 @@ export class Create2WalletSigner extends ethers.Signer {
     }
 
     connect(provider: ethers.providers.Provider): ethers.Signer {
-        return new Create2WalletSigner(this.zkSyncPubkeyHash, this.create2WalletData, provider);
+        return new Create2WalletSigner(this.rifRollupSyncPubkeyHash, this.create2WalletData, provider);
     }
 }
 

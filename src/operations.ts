@@ -3,7 +3,7 @@ import { SyncProvider } from './provider-interface';
 import { PriorityOperationReceipt, SignedTransaction, TransactionReceipt, TxEthSignature } from './types';
 import { SYNC_MAIN_CONTRACT_INTERFACE } from './utils';
 
-export class ZKSyncTxError extends Error {
+export class RifRollupTxError extends Error {
     constructor(message: string, public value: PriorityOperationReceipt | TransactionReceipt) {
         super(message);
     }
@@ -11,10 +11,10 @@ export class ZKSyncTxError extends Error {
 
 export class ETHOperation {
     state: 'Sent' | 'Mined' | 'Committed' | 'Verified' | 'Failed';
-    error?: ZKSyncTxError;
+    error?: RifRollupTxError;
     priorityOpId?: BigNumber;
 
-    constructor(public ethTx: ContractTransaction, public zkSyncProvider: SyncProvider) {
+    constructor(public ethTx: ContractTransaction, public rifRollupProvider: SyncProvider) {
         this.state = 'Sent';
     }
 
@@ -45,15 +45,15 @@ export class ETHOperation {
         if (this.state !== 'Mined') return;
 
         let query: number | string;
-        if (this.zkSyncProvider.providerType === 'RPC') {
+        if (this.rifRollupProvider.providerType === 'RPC') {
             query = this.priorityOpId.toNumber();
         } else {
             query = this.ethTx.hash;
         }
-        const receipt = await this.zkSyncProvider.notifyPriorityOp(query, 'COMMIT');
+        const receipt = await this.rifRollupProvider.notifyPriorityOp(query, 'COMMIT');
 
         if (!receipt.executed) {
-            this.setErrorState(new ZKSyncTxError('Priority operation failed', receipt));
+            this.setErrorState(new RifRollupTxError('Priority operation failed', receipt));
             this.throwErrorIfFailedState();
         }
 
@@ -66,19 +66,19 @@ export class ETHOperation {
         if (this.state !== 'Committed') return;
 
         let query: number | string;
-        if (this.zkSyncProvider.providerType === 'RPC') {
+        if (this.rifRollupProvider.providerType === 'RPC') {
             query = this.priorityOpId.toNumber();
         } else {
             query = this.ethTx.hash;
         }
-        const receipt = await this.zkSyncProvider.notifyPriorityOp(query, 'VERIFY');
+        const receipt = await this.rifRollupProvider.notifyPriorityOp(query, 'VERIFY');
 
         this.state = 'Verified';
 
         return receipt;
     }
 
-    private setErrorState(error: ZKSyncTxError) {
+    private setErrorState(error: RifRollupTxError) {
         this.state = 'Failed';
         this.error = error;
     }
@@ -90,7 +90,7 @@ export class ETHOperation {
 
 export class Transaction {
     state: 'Sent' | 'Committed' | 'Verified' | 'Failed';
-    error?: ZKSyncTxError;
+    error?: RifRollupTxError;
 
     constructor(public txData, public txHash: string, public sidechainProvider: SyncProvider) {
         this.state = 'Sent';
@@ -104,7 +104,7 @@ export class Transaction {
         const receipt = await this.sidechainProvider.notifyTransaction(this.txHash, 'COMMIT');
 
         if (!receipt.success) {
-            this.setErrorState(new ZKSyncTxError(`zkSync transaction failed: ${receipt.failReason}`, receipt));
+            this.setErrorState(new RifRollupTxError(`RIF Rollup transaction failed: ${receipt.failReason}`, receipt));
             this.throwErrorIfFailedState();
         }
 
@@ -120,7 +120,7 @@ export class Transaction {
         return receipt;
     }
 
-    private setErrorState(error: ZKSyncTxError) {
+    private setErrorState(error: RifRollupTxError) {
         this.state = 'Failed';
         this.error = error;
     }
