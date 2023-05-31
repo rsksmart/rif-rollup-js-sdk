@@ -313,7 +313,7 @@ export class Provider extends SyncProvider {
     }
 }
 
-export class RSKProxy {
+export class RBTCProxy {
     private governanceContract: Governance;
     private rifRollupContract: RifRollup;
     private rifRollupNFTFactory: RifRollupNFTFactory;

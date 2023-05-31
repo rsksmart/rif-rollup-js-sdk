@@ -600,7 +600,7 @@ import { ethers } from 'ethers';
 const ethersProvider = ethers.getDefaultProvider('goerli');
 const syncHttpProvider = await rifRollup.getDefaultProvider('goerli');
 
-const ethProxy = new rifRollup.RBTCProxy(ethersProvider, syncHttpProvider.contractAddress);
+const rbtcProxy = new rifRollup.RBTCProxy(ethersProvider, syncHttpProvider.contractAddress);
 ```
 
 ### Resolve token id
@@ -629,10 +629,10 @@ import { ethers } from 'ethers';
 
 const ethersProvider = ethers.getDefaultProvider('goerli');
 const syncProvider = await rifRollup.getDefaultProvider('goerli');
-const ethProxy = new rifRollup.RBTCProxy(ethersProvider, syncProvider.contractAddress);
+const rbtcProxy = new rifRollup.RBTCProxy(ethersProvider, syncProvider.contractAddress);
 
-const ethId = await ethProxy.resolveTokenId('0x0000000000000000000000000000000000000000'); // RBTC token address is 0x0..0
+const rbtcId = await rbtcProxy.resolveTokenId('0x0000000000000000000000000000000000000000'); // RBTC token address is 0x0..0
 
 // ERC20 token if it is supported, >= 1
-const erc20Id = await ethProxy.resolveTokenId('0xFab46E002BbF0b4509813474841E0716E6730136');
+const erc20Id = await rbtcProxy.resolveTokenId('0xFab46E002BbF0b4509813474841E0716E6730136');
 ```
