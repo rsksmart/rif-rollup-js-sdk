@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RSKProxy = exports.Provider = exports.getDefaultProvider = void 0;
+exports.RBTCProxy = exports.Provider = exports.getDefaultProvider = void 0;
 const transport_1 = require("./transport");
 const ethers_1 = require("ethers");
 const utils_1 = require("./utils");
@@ -306,7 +306,7 @@ class Provider extends provider_interface_1.SyncProvider {
     }
 }
 exports.Provider = Provider;
-class RSKProxy {
+class RBTCProxy {
     constructor(ethersProvider, contractAddress) {
         this.ethersProvider = ethersProvider;
         this.contractAddress = contractAddress;
@@ -353,4 +353,4 @@ class RSKProxy {
         });
     }
 }
-exports.RSKProxy = RSKProxy;
+exports.RBTCProxy = RBTCProxy;

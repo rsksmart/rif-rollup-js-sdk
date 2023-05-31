@@ -13,9 +13,9 @@ exports.serializeTimestamp = exports.serializeNonce = exports.serializeFeePacked
 exports.getTxHash = exports.getPendingBalance = exports.getEthereumBalance = exports.getCREATE2AddressAndSalt = exports.parseHexWithPrefix = exports.numberToBytesBE = exports.serializeTx = exports.serializeForcedExit = exports.serializeChangePubKey = exports.serializeTransfer = exports.serializeWithdrawNFT = exports.serializeMintNFT = exports.serializeWithdraw = exports.serializeSwap = exports.serializeOrder = void 0;
 const ethers_1 = require("ethers");
 const crypto_1 = require("./crypto");
-// Max number of tokens for the current version, it is determined by the rifRollup circuit implementation.
+// Max number of tokens for the current version, it is determined by the RIF Rollup circuit implementation.
 const MAX_NUMBER_OF_TOKENS = Math.pow(2, 31);
-// Max number of accounts for the current version, it is determined by the rifRollup circuit implementation.
+// Max number of accounts for the current version, it is determined by the RIF Rollup circuit implementation.
 const MAX_NUMBER_OF_ACCOUNTS = Math.pow(2, 24);
 exports.MAX_TIMESTAMP = 4294967295;
 exports.MIN_NFT_TOKEN_ID = 65536;
@@ -374,13 +374,13 @@ function getToggle2FAMessage(require2FA, timestamp, pubKeyHash) {
     let message;
     if (require2FA) {
         message =
-            `By signing this message, you are opting into Two-factor Authentication protection by the RIF Rollup Server.\n` +
+            `By signing this message, you are opting into Two-factor Authentication protection by the zkSync Server.\n` +
                 `Transactions now require signatures by both your L1 and L2 private key.\n` +
                 `Timestamp: ${timestamp}`;
     }
     else {
         message =
-            `You are opting out of Two-factor Authentication protection by the RIF Rollup Server.\n` +
+            `You are opting out of Two-factor Authentication protection by the zkSync Server.\n` +
                 `Transactions now only require signatures by your L2 private key.\n` +
                 `BY SIGNING THIS MESSAGE, YOU ARE TRUSTING YOUR WALLET CLIENT TO KEEP YOUR L2 PRIVATE KEY SAFE!\n` +
                 `Timestamp: ${timestamp}`;

@@ -3,7 +3,7 @@ import { EthMessageSigner } from './eth-message-signer';
 import { SyncProvider } from './provider-interface';
 import { BatchBuilder, BatchBuilderInternalTx } from './batch-builder';
 import { AccountState, Address, ChangePubkeyTypes, NFT, Nonce, Order, PubKeyHash, SignedTransaction, TokenLike, TxEthSignature, TokenRatio, WeiRatio, Toggle2FARequest } from './types';
-import { Transaction, ETHOperation } from './operations';
+import { Transaction, RootstockOperation } from './operations';
 export declare abstract class AbstractWallet {
     cachedAddress: Address;
     accountId?: number;
@@ -91,7 +91,7 @@ export declare abstract class AbstractWallet {
         validFrom?: number;
         validUntil?: number;
     }): Promise<Transaction>;
-    abstract signWithdrawFromSyncToEthereum(withdraw: {
+    abstract signWithdrawFromSyncToRootstock(withdraw: {
         ethAddress: string;
         token: TokenLike;
         amount: BigNumberish;
@@ -100,7 +100,7 @@ export declare abstract class AbstractWallet {
         validFrom?: number;
         validUntil?: number;
     }): Promise<SignedTransaction>;
-    abstract withdrawFromSyncToEthereum(withdraw: {
+    abstract withdrawFromSyncToRootstock(withdraw: {
         ethAddress: string;
         token: TokenLike;
         amount: BigNumberish;
@@ -213,24 +213,24 @@ export declare abstract class AbstractWallet {
     getToggle2FA(enable: boolean, pubKeyHash?: PubKeyHash): Promise<Toggle2FARequest>;
     toggle2FA(enable: boolean, pubKeyHash?: PubKeyHash): Promise<boolean>;
     approveERC20TokenDeposits(token: TokenLike, max_erc20_approve_amount?: BigNumber): Promise<ContractTransaction>;
-    depositToSyncFromEthereum(deposit: {
+    depositToSyncFromRootstock(deposit: {
         depositTo: Address;
         token: TokenLike;
         amount: BigNumberish;
         ethTxOptions?: ethers.providers.TransactionRequest;
         approveDepositAmountForERC20?: boolean;
-    }): Promise<ETHOperation>;
+    }): Promise<RootstockOperation>;
     onchainAuthSigningKey(nonce?: Nonce, ethTxOptions?: ethers.providers.TransactionRequest): Promise<ContractTransaction>;
     emergencyWithdraw(withdraw: {
         token: TokenLike;
         accountId?: number;
         ethTxOptions?: ethers.providers.TransactionRequest;
-    }): Promise<ETHOperation>;
+    }): Promise<RootstockOperation>;
     emergencyWithdrawNFT(withdrawNFT: {
         tokenId: number;
         accountId?: number;
         ethTxOptions?: ethers.providers.TransactionRequest;
-    }): Promise<ETHOperation>;
+    }): Promise<RootstockOperation>;
     signRegisterFactory(factoryAddress: Address): Promise<{
         signature: TxEthSignature;
         accountId: number;

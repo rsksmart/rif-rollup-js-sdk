@@ -40,7 +40,7 @@ export declare class Provider extends SyncProvider {
     getNFTIdByTxHash(txHash: string): Promise<number>;
     disconnect(): Promise<any>;
 }
-export declare class RSKProxy {
+export declare class RBTCProxy {
     private ethersProvider;
     contractAddress: ContractAddress;
     private governanceContract;

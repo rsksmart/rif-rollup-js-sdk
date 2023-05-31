@@ -5,14 +5,14 @@ export declare class RifRollupTxError extends Error {
     value: PriorityOperationReceipt | TransactionReceipt;
     constructor(message: string, value: PriorityOperationReceipt | TransactionReceipt);
 }
-export declare class ETHOperation {
+export declare class RootstockOperation {
     ethTx: ContractTransaction;
     rifRollupProvider: SyncProvider;
     state: 'Sent' | 'Mined' | 'Committed' | 'Verified' | 'Failed';
     error?: RifRollupTxError;
     priorityOpId?: BigNumber;
     constructor(ethTx: ContractTransaction, rifRollupProvider: SyncProvider);
-    awaitEthereumTxCommit(): Promise<import("ethers").ContractReceipt>;
+    awaitRootstockTxCommit(): Promise<import("ethers").ContractReceipt>;
     awaitReceipt(): Promise<PriorityOperationReceipt>;
     awaitVerifyReceipt(): Promise<PriorityOperationReceipt>;
     private setErrorState;

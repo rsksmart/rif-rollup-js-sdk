@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.submitSignedTransactionsBatch = exports.submitSignedTransaction = exports.Transaction = exports.ETHOperation = exports.RifRollupTxError = void 0;
+exports.submitSignedTransactionsBatch = exports.submitSignedTransaction = exports.Transaction = exports.RootstockOperation = exports.RifRollupTxError = void 0;
 const utils_1 = require("./utils");
 class RifRollupTxError extends Error {
     constructor(message, value) {
@@ -18,13 +18,13 @@ class RifRollupTxError extends Error {
     }
 }
 exports.RifRollupTxError = RifRollupTxError;
-class ETHOperation {
+class RootstockOperation {
     constructor(ethTx, rifRollupProvider) {
         this.ethTx = ethTx;
         this.rifRollupProvider = rifRollupProvider;
         this.state = 'Sent';
     }
-    awaitEthereumTxCommit() {
+    awaitRootstockTxCommit() {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.state !== 'Sent')
                 return;
@@ -48,7 +48,7 @@ class ETHOperation {
     awaitReceipt() {
         return __awaiter(this, void 0, void 0, function* () {
             this.throwErrorIfFailedState();
-            yield this.awaitEthereumTxCommit();
+            yield this.awaitRootstockTxCommit();
             if (this.state !== 'Mined')
                 return;
             let query;
@@ -93,7 +93,7 @@ class ETHOperation {
             throw this.error;
     }
 }
-exports.ETHOperation = ETHOperation;
+exports.RootstockOperation = RootstockOperation;
 class Transaction {
     constructor(txData, txHash, sidechainProvider) {
         this.txData = txData;

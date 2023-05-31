@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Wallet = exports.submitSignedTransactionsBatch = exports.submitSignedTransaction = exports.ETHOperation = exports.Transaction = void 0;
+exports.Wallet = exports.submitSignedTransactionsBatch = exports.submitSignedTransaction = exports.RootstockOperation = exports.Transaction = void 0;
 const ethers_1 = require("ethers");
 const eth_message_signer_1 = require("./eth-message-signer");
 const signer_1 = require("./signer");
@@ -18,7 +18,7 @@ const operations_1 = require("./operations");
 const abstract_wallet_1 = require("./abstract-wallet");
 var operations_2 = require("./operations");
 Object.defineProperty(exports, "Transaction", { enumerable: true, get: function () { return operations_2.Transaction; } });
-Object.defineProperty(exports, "ETHOperation", { enumerable: true, get: function () { return operations_2.ETHOperation; } });
+Object.defineProperty(exports, "RootstockOperation", { enumerable: true, get: function () { return operations_2.RootstockOperation; } });
 Object.defineProperty(exports, "submitSignedTransaction", { enumerable: true, get: function () { return operations_2.submitSignedTransaction; } });
 Object.defineProperty(exports, "submitSignedTransactionsBatch", { enumerable: true, get: function () { return operations_2.submitSignedTransactionsBatch; } });
 class Wallet extends abstract_wallet_1.AbstractWallet {
@@ -296,7 +296,7 @@ class Wallet extends abstract_wallet_1.AbstractWallet {
         });
     }
     // Withdraw part
-    signWithdrawFromSyncToEthereum(withdraw) {
+    signWithdrawFromSyncToRootstock(withdraw) {
         return __awaiter(this, void 0, void 0, function* () {
             withdraw.validFrom = withdraw.validFrom || 0;
             withdraw.validUntil = withdraw.validUntil || utils_1.MAX_TIMESTAMP;
@@ -324,7 +324,7 @@ class Wallet extends abstract_wallet_1.AbstractWallet {
             };
         });
     }
-    withdrawFromSyncToEthereum(withdraw) {
+    withdrawFromSyncToRootstock(withdraw) {
         return __awaiter(this, void 0, void 0, function* () {
             withdraw.nonce = withdraw.nonce != null ? yield this.getNonce(withdraw.nonce) : yield this.getNonce();
             if (withdraw.fee == null) {
@@ -332,7 +332,7 @@ class Wallet extends abstract_wallet_1.AbstractWallet {
                 const fullFee = yield this.provider.getTransactionFee(feeType, withdraw.ethAddress, withdraw.token);
                 withdraw.fee = fullFee.totalFee;
             }
-            const signedWithdrawTransaction = yield this.signWithdrawFromSyncToEthereum(withdraw);
+            const signedWithdrawTransaction = yield this.signWithdrawFromSyncToRootstock(withdraw);
             return (0, operations_1.submitSignedTransaction)(signedWithdrawTransaction, this.provider, withdraw.fastProcessing);
         });
     }

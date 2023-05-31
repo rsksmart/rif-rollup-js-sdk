@@ -186,7 +186,7 @@ class AbstractWallet {
             }
         });
     }
-    depositToSyncFromEthereum(deposit) {
+    depositToSyncFromRootstock(deposit) {
         return __awaiter(this, void 0, void 0, function* () {
             const gasPrice = yield this.ethSigner().provider.getGasPrice();
             const mainRifRollupContract = this.getRifRollupMainContract();
@@ -243,7 +243,7 @@ class AbstractWallet {
                     this.modifyEthersError(e);
                 }
             }
-            return new operations_1.ETHOperation(ethTransaction, this.provider);
+            return new operations_1.RootstockOperation(ethTransaction, this.provider);
         });
     }
     onchainAuthSigningKey(nonce = 'committed', ethTxOptions) {
@@ -274,7 +274,7 @@ class AbstractWallet {
             const tokenAddress = this.provider.tokenSet.resolveTokenAddress(withdraw.token);
             try {
                 const ethTransaction = yield mainRifRollupContract.requestFullExit(accountId, tokenAddress, Object.assign({ gasLimit: ethers_1.BigNumber.from('500000'), gasPrice }, withdraw.ethTxOptions));
-                return new operations_1.ETHOperation(ethTransaction, this.provider);
+                return new operations_1.RootstockOperation(ethTransaction, this.provider);
             }
             catch (e) {
                 this.modifyEthersError(e);
@@ -288,7 +288,7 @@ class AbstractWallet {
             const mainRifRollupContract = this.getRifRollupMainContract();
             try {
                 const ethTransaction = yield mainRifRollupContract.requestFullExitNFT(accountId, withdrawNFT.tokenId, Object.assign({ gasLimit: ethers_1.BigNumber.from('500000'), gasPrice }, withdrawNFT.ethTxOptions));
-                return new operations_1.ETHOperation(ethTransaction, this.provider);
+                return new operations_1.RootstockOperation(ethTransaction, this.provider);
             }
             catch (e) {
                 this.modifyEthersError(e);
@@ -351,7 +351,7 @@ class AbstractWallet {
             if (this.provider.network != undefined && this.ethSigner().provider != undefined) {
                 const ethNetwork = yield this.ethSigner().provider.getNetwork();
                 if ((0, types_1.l1ChainId)(this.provider.network) !== ethNetwork.chainId) {
-                    throw new Error(`ETH network ${ethNetwork.name} and RIF Rollup network ${this.provider.network} don't match`);
+                    throw new Error(`Rootstock network ${ethNetwork.name} and RIF Rollup network ${this.provider.network} don't match`);
                 }
             }
         });

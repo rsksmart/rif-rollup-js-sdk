@@ -5,7 +5,7 @@ import { BatchBuilderInternalTx } from './batch-builder';
 import { Address, ChangePubkeyTypes, NFT, Nonce, Order, PubKeyHash, SignedTransaction, TokenLike, TxEthSignature, TokenRatio, WeiRatio } from './types';
 import { Transaction } from './operations';
 import { AbstractWallet } from './abstract-wallet';
-export { Transaction, ETHOperation, submitSignedTransaction, submitSignedTransactionsBatch } from './operations';
+export { Transaction, RootstockOperation, submitSignedTransaction, submitSignedTransactionsBatch } from './operations';
 export declare class RemoteWallet extends AbstractWallet {
     private web3Provider;
     private _ethMessageSigner;
@@ -55,7 +55,7 @@ export declare class RemoteWallet extends AbstractWallet {
         validFrom?: number;
         validUntil?: number;
     }): Promise<Transaction>;
-    signWithdrawFromSyncToEthereum(withdraw: {
+    signWithdrawFromSyncToRootstock(withdraw: {
         ethAddress: string;
         token: TokenLike;
         amount: BigNumberish;
@@ -64,7 +64,7 @@ export declare class RemoteWallet extends AbstractWallet {
         validFrom?: number;
         validUntil?: number;
     }): Promise<SignedTransaction>;
-    withdrawFromSyncToEthereum(withdraw: {
+    withdrawFromSyncToRootstock(withdraw: {
         ethAddress: string;
         token: TokenLike;
         amount: BigNumberish;
@@ -190,7 +190,7 @@ export declare class RemoteWallet extends AbstractWallet {
      */
     protected callExtSignZKSyncBatch(txs: any[]): Promise<SignedTransaction[]>;
     /**
-     * Performs an RPC call to the custom `zkSync_signBatch` method.
+     * Performs an RPC call to the custom `zkSync_signedOrder` method.
      *
      * @param txs An order data to be signed.
      *

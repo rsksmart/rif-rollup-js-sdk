@@ -6,7 +6,7 @@ import { BatchBuilderInternalTx } from './batch-builder';
 import { Address, ChangePubKey, ChangePubKeyCREATE2, ChangePubKeyECDSA, ChangePubKeyOnchain, ChangePubkeyTypes, Create2Data, EthSignerType, ForcedExit, MintNFT, NFT, Nonce, Order, PubKeyHash, SignedTransaction, Swap, TokenLike, Transfer, TxEthSignature, Withdraw, WithdrawNFT, TokenRatio, WeiRatio } from './types';
 import { Transaction } from './operations';
 import { AbstractWallet } from './abstract-wallet';
-export { Transaction, ETHOperation, submitSignedTransaction, submitSignedTransactionsBatch } from './operations';
+export { Transaction, RootstockOperation, submitSignedTransaction, submitSignedTransactionsBatch } from './operations';
 export declare class Wallet extends AbstractWallet {
     _ethSigner: ethers.Signer;
     private _ethMessageSigner;
@@ -60,7 +60,7 @@ export declare class Wallet extends AbstractWallet {
         validFrom?: number;
         validUntil?: number;
     }): Promise<Transaction>;
-    signWithdrawFromSyncToEthereum(withdraw: {
+    signWithdrawFromSyncToRootstock(withdraw: {
         ethAddress: string;
         token: TokenLike;
         amount: BigNumberish;
@@ -69,7 +69,7 @@ export declare class Wallet extends AbstractWallet {
         validFrom?: number;
         validUntil?: number;
     }): Promise<SignedTransaction>;
-    withdrawFromSyncToEthereum(withdraw: {
+    withdrawFromSyncToRootstock(withdraw: {
         ethAddress: string;
         token: TokenLike;
         amount: BigNumberish;

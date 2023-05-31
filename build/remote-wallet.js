@@ -9,14 +9,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RemoteWallet = exports.submitSignedTransactionsBatch = exports.submitSignedTransaction = exports.ETHOperation = exports.Transaction = void 0;
+exports.RemoteWallet = exports.submitSignedTransactionsBatch = exports.submitSignedTransaction = exports.RootstockOperation = exports.Transaction = void 0;
 const ethers_1 = require("ethers");
 const eth_message_signer_1 = require("./eth-message-signer");
 const operations_1 = require("./operations");
 const abstract_wallet_1 = require("./abstract-wallet");
 var operations_2 = require("./operations");
 Object.defineProperty(exports, "Transaction", { enumerable: true, get: function () { return operations_2.Transaction; } });
-Object.defineProperty(exports, "ETHOperation", { enumerable: true, get: function () { return operations_2.ETHOperation; } });
+Object.defineProperty(exports, "RootstockOperation", { enumerable: true, get: function () { return operations_2.RootstockOperation; } });
 Object.defineProperty(exports, "submitSignedTransaction", { enumerable: true, get: function () { return operations_2.submitSignedTransaction; } });
 Object.defineProperty(exports, "submitSignedTransactionsBatch", { enumerable: true, get: function () { return operations_2.submitSignedTransactionsBatch; } });
 class RemoteWallet extends abstract_wallet_1.AbstractWallet {
@@ -112,16 +112,16 @@ class RemoteWallet extends abstract_wallet_1.AbstractWallet {
         });
     }
     // Withdraw part
-    signWithdrawFromSyncToEthereum(withdraw) {
+    signWithdrawFromSyncToRootstock(withdraw) {
         return __awaiter(this, void 0, void 0, function* () {
             const signed = yield this.callExtSignZKSyncBatch([Object.assign({ type: 'Withdraw' }, withdraw)]);
             return signed[0];
         });
     }
-    withdrawFromSyncToEthereum(withdraw) {
+    withdrawFromSyncToRootstock(withdraw) {
         return __awaiter(this, void 0, void 0, function* () {
             const fastProcessing = withdraw.fastProcessing;
-            const signed = yield this.signWithdrawFromSyncToEthereum(withdraw);
+            const signed = yield this.signWithdrawFromSyncToRootstock(withdraw);
             return (0, operations_1.submitSignedTransaction)(signed, this.provider, fastProcessing);
         });
     }
@@ -296,7 +296,7 @@ class RemoteWallet extends abstract_wallet_1.AbstractWallet {
         });
     }
     /**
-     * Performs an RPC call to the custom `zkSync_signBatch` method.
+     * Performs an RPC call to the custom `zkSync_signedOrder` method.
      *
      * @param txs An order data to be signed.
      *
@@ -307,7 +307,7 @@ class RemoteWallet extends abstract_wallet_1.AbstractWallet {
             try {
                 const preparedOrder = this.prepareTxsBeforeSending([order]);
                 // For now, we assume that the same method will be used for both signing transactions and orders.
-                const signedOrder = (yield this.web3Provider.send('zkSync_signBatch', [preparedOrder]))[0];
+                const signedOrder = (yield this.web3Provider.send('zkSync_signedOrder', [preparedOrder]))[0];
                 // Sanity check
                 if (!signedOrder['signature']) {
                     throw new Error('Wallet server returned a malformed response to the sign order request');
@@ -316,7 +316,7 @@ class RemoteWallet extends abstract_wallet_1.AbstractWallet {
             }
             catch (e) {
                 // TODO: Catching general error is a bad idea, as a lot of things can throw an exception.
-                console.error(`Received an error performing 'zkSync_signBatch' request: ${e.toString()}`);
+                console.error(`Received an error performing 'zkSync_signedOrder' request: ${e.toString()}`);
                 throw new Error('Wallet server returned a malformed response to the sign order request');
             }
         });
