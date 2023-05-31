@@ -683,7 +683,7 @@ export abstract class AbstractWallet {
             const ethNetwork = await this.ethSigner().provider.getNetwork();
             if (l1ChainId(this.provider.network) !== ethNetwork.chainId) {
                 throw new Error(
-                    `ETH network ${ethNetwork.name} and RIF Rollup network ${this.provider.network} don't match`
+                    `Rootstock network ${ethNetwork.name} and RIF Rollup network ${this.provider.network} don't match`
                 );
             }
         }

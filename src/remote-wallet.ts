@@ -453,7 +453,7 @@ export class RemoteWallet extends AbstractWallet {
     }
 
     /**
-     * Performs an RPC call to the custom `zkSync_signBatch` method.
+     * Performs an RPC call to the custom `zkSync_signedOrder` method.
      *
      * @param txs An order data to be signed.
      *
@@ -463,7 +463,7 @@ export class RemoteWallet extends AbstractWallet {
         try {
             const preparedOrder = this.prepareTxsBeforeSending([order]);
             // For now, we assume that the same method will be used for both signing transactions and orders.
-            const signedOrder: any = (await this.web3Provider.send('zkSync_signBatch', [preparedOrder]))[0];
+            const signedOrder: any = (await this.web3Provider.send('zkSync_signedOrder', [preparedOrder]))[0];
 
             // Sanity check
             if (!signedOrder['signature']) {
@@ -473,7 +473,7 @@ export class RemoteWallet extends AbstractWallet {
             return signedOrder as Order;
         } catch (e) {
             // TODO: Catching general error is a bad idea, as a lot of things can throw an exception.
-            console.error(`Received an error performing 'zkSync_signBatch' request: ${e.toString()}`);
+            console.error(`Received an error performing 'zkSync_signedOrder' request: ${e.toString()}`);
             throw new Error('Wallet server returned a malformed response to the sign order request');
         }
     }

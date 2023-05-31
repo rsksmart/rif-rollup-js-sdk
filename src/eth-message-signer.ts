@@ -325,7 +325,7 @@ export class EthMessageSigner {
         const accountAddressHex = ethers.utils.hexlify(serializeAddress(accountAddress)).substr(2);
         const msgAccId = ethers.utils.hexlify(serializeAccountId(accountId)).substr(2);
         const message =
-            `\nCreator's account ID in RIF Rollup: ${msgAccId}\n` +
+            `\nCreator's account ID in zkSync: ${msgAccId}\n` +
             `Creator: ${accountAddressHex}\n` +
             `Factory: ${factoryAddressHex}`;
         const msgBytes = ethers.utils.toUtf8Bytes(message);
