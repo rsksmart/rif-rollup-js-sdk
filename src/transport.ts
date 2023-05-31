@@ -158,7 +158,7 @@ export class WSTransport extends AbstractJSONRPCTransport {
             return response.result;
         } else if ('error' in response) {
             throw new JRPCError(
-                `rifRollup API response error: code ${response.error.code}; message: ${response.error.message}`,
+                `RIF Rollup API response error: code ${response.error.code}; message: ${response.error.message}`,
                 response.error
             );
         } else {

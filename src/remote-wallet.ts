@@ -101,7 +101,7 @@ export class RemoteWallet extends AbstractWallet {
             nonce += 1;
             return { type: tx.type, ...tx.tx };
         });
-        const signedTransactions = await this.callExtSignRifRollupBatch(txsToSign);
+        const signedTransactions = await this.callExtSignZKSyncBatch(txsToSign);
         // Each transaction will have its own Ethereum signature, if it's required.
         // There will be no umbrella signature for the whole batch.
         return { txs: signedTransactions };
@@ -120,7 +120,7 @@ export class RemoteWallet extends AbstractWallet {
         validFrom?: number;
         validUntil?: number;
     }): Promise<SignedTransaction> {
-        const signed = await this.callExtSignRifRollupBatch([{ type: 'Transfer', ...transfer }]);
+        const signed = await this.callExtSignZKSyncBatch([{ type: 'Transfer', ...transfer }]);
         return signed[0];
     }
 
@@ -148,7 +148,7 @@ export class RemoteWallet extends AbstractWallet {
         validFrom?: number;
         validUntil?: number;
     }): Promise<SignedTransaction> {
-        const signed = await this.callExtSignRifRollupBatch([{ type: 'ChangePubKey', ...changePubKey }]);
+        const signed = await this.callExtSignZKSyncBatch([{ type: 'ChangePubKey', ...changePubKey }]);
         return signed[0];
     }
 
@@ -175,7 +175,7 @@ export class RemoteWallet extends AbstractWallet {
         validFrom?: number;
         validUntil?: number;
     }): Promise<SignedTransaction> {
-        const signed = await this.callExtSignRifRollupBatch([{ type: 'Withdraw', ...withdraw }]);
+        const signed = await this.callExtSignZKSyncBatch([{ type: 'Withdraw', ...withdraw }]);
         return signed[0];
     }
 
@@ -204,7 +204,7 @@ export class RemoteWallet extends AbstractWallet {
         validFrom?: number;
         validUntil?: number;
     }): Promise<SignedTransaction> {
-        const signed = await this.callExtSignRifRollupBatch([{ type: 'ForcedExit', ...forcedExit }]);
+        const signed = await this.callExtSignZKSyncBatch([{ type: 'ForcedExit', ...forcedExit }]);
         return signed[0];
     }
 
@@ -242,7 +242,7 @@ export class RemoteWallet extends AbstractWallet {
         nonce: number;
         fee: BigNumberish;
     }): Promise<SignedTransaction> {
-        const signed = await this.callExtSignRifRollupBatch([{ type: 'Swap', ...swap }]);
+        const signed = await this.callExtSignZKSyncBatch([{ type: 'Swap', ...swap }]);
         return signed[0];
     }
 
@@ -266,7 +266,7 @@ export class RemoteWallet extends AbstractWallet {
         fee: BigNumberish;
         nonce: number;
     }): Promise<SignedTransaction> {
-        const signed = await this.callExtSignRifRollupBatch([{ type: 'MintNFT', ...mintNFT }]);
+        const signed = await this.callExtSignZKSyncBatch([{ type: 'MintNFT', ...mintNFT }]);
         return signed[0];
     }
 
@@ -292,7 +292,7 @@ export class RemoteWallet extends AbstractWallet {
         validFrom?: number;
         validUntil?: number;
     }): Promise<SignedTransaction> {
-        const signed = await this.callExtSignRifRollupBatch([{ type: 'WithdrawNFT', ...withdrawNFT }]);
+        const signed = await this.callExtSignZKSyncBatch([{ type: 'WithdrawNFT', ...withdrawNFT }]);
         return signed[0];
     }
 
@@ -372,7 +372,7 @@ export class RemoteWallet extends AbstractWallet {
                 ...transfer
             };
         });
-        const signed = await this.callExtSignRifRollupBatch(transfers);
+        const signed = await this.callExtSignZKSyncBatch(transfers);
         return submitSignedTransactionsBatch(this.provider, signed);
     }
 
@@ -416,7 +416,7 @@ export class RemoteWallet extends AbstractWallet {
     }
 
     /**
-     * Performs an RPC call to the custom `rifRollup_signBatch` method.
+     * Performs an RPC call to the custom `zkSync_signBatch` method.
      * This method is specified here: https://github.com/argentlabs/argent-contracts-l2/discussions/4
      *
      * Basically, it's an addition to the WalletConnect server that accepts intentionally incomplete
@@ -427,13 +427,13 @@ export class RemoteWallet extends AbstractWallet {
      *
      * @returns A list of singed transactions.
      */
-    protected async callExtSignRifRollupBatch(txs: any[]): Promise<SignedTransaction[]> {
+    protected async callExtSignZKSyncBatch(txs: any[]): Promise<SignedTransaction[]> {
         try {
             const preparedTxs = this.prepareTxsBeforeSending(txs);
             // Response must be an array of signed transactions.
             // Transactions are flattened (ethereum signatures are on the same level as L2 signatures),
             // so we need to "unflat" each one.
-            const response: any[] = await this.web3Provider.send('rifRollup_signBatch', [preparedTxs]);
+            const response: any[] = await this.web3Provider.send('zkSync_signBatch', [preparedTxs]);
 
             const transactions = response.map((tx) => {
                 const ethereumSignature = tx['ethereumSignature'];
@@ -447,13 +447,13 @@ export class RemoteWallet extends AbstractWallet {
 
             return transactions;
         } catch (e) {
-            console.error(`Received an error performing 'rifRollup_signBatch' request: ${e.toString()}`);
+            console.error(`Received an error performing 'zkSync_signBatch' request: ${e.toString()}`);
             throw new Error('Wallet server returned a malformed response to the sign batch request');
         }
     }
 
     /**
-     * Performs an RPC call to the custom `rifRollup_signBatch` method.
+     * Performs an RPC call to the custom `zkSync_signBatch` method.
      *
      * @param txs An order data to be signed.
      *
@@ -463,7 +463,7 @@ export class RemoteWallet extends AbstractWallet {
         try {
             const preparedOrder = this.prepareTxsBeforeSending([order]);
             // For now, we assume that the same method will be used for both signing transactions and orders.
-            const signedOrder: any = (await this.web3Provider.send('rifRollup_signBatch', [preparedOrder]))[0];
+            const signedOrder: any = (await this.web3Provider.send('zkSync_signBatch', [preparedOrder]))[0];
 
             // Sanity check
             if (!signedOrder['signature']) {
@@ -473,26 +473,26 @@ export class RemoteWallet extends AbstractWallet {
             return signedOrder as Order;
         } catch (e) {
             // TODO: Catching general error is a bad idea, as a lot of things can throw an exception.
-            console.error(`Received an error performing 'rifRollup_signOrder' request: ${e.toString()}`);
+            console.error(`Received an error performing 'zkSync_signBatch' request: ${e.toString()}`);
             throw new Error('Wallet server returned a malformed response to the sign order request');
         }
     }
 
     /**
-     * Performs an RPC call to the custom `rifRollup_signerPubKeyHash` method.
+     * Performs an RPC call to the custom `zkSync_signerPubKeyHash` method.
      *
      * This method should return a public key hash associated with the wallet
      */
     protected async callExtSignerPubKeyHash(): Promise<PubKeyHash> {
         try {
-            const response = await this.web3Provider.send('rifRollup_signerPubKeyHash', null);
+            const response = await this.web3Provider.send('zkSync_signerPubKeyHash', null);
             if (!response['pubKeyHash']) {
                 throw new Error('Wallet server returned a malformed response to the PubKeyHash request');
             }
             return response['pubKeyHash'];
         } catch (e) {
             // TODO: Catching general error is a bad idea, as a lot of things can throw an exception.
-            console.error(`Received an error performing 'rifRollup_signerPubKeyHash' request: ${e.toString()}`);
+            console.error(`Received an error performing 'zkSync_signerPubKeyHash' request: ${e.toString()}`);
             throw new Error('Wallet server returned a malformed response to the PubKeyHash request');
         }
     }

@@ -438,7 +438,7 @@ export function getChangePubkeyLegacyMessage(pubKeyHash: PubKeyHash, nonce: numb
     const msgAccId = utils.hexlify(serializeAccountId(accountId));
     const msgPubKeyHash = utils.hexlify(serializeAddress(pubKeyHash)).substr(2);
     const message =
-        `Register rifRollup pubkey:\n\n` +
+        `Register zkSync pubkey:\n\n` +
         `${msgPubKeyHash}\n` +
         `nonce: ${msgNonce}\n` +
         `account id: ${msgAccId}\n\n` +
@@ -450,12 +450,12 @@ export function getToggle2FAMessage(require2FA: boolean, timestamp: number, pubK
     let message: string;
     if (require2FA) {
         message =
-            `By signing this message, you are opting into Two-factor Authentication protection by the rifRollup Server.\n` +
+            `By signing this message, you are opting into Two-factor Authentication protection by the RIF Rollup Server.\n` +
             `Transactions now require signatures by both your L1 and L2 private key.\n` +
             `Timestamp: ${timestamp}`;
     } else {
         message =
-            `You are opting out of Two-factor Authentication protection by the rifRollup Server.\n` +
+            `You are opting out of Two-factor Authentication protection by the RIF Rollup Server.\n` +
             `Transactions now only require signatures by your L2 private key.\n` +
             `BY SIGNING THIS MESSAGE, YOU ARE TRUSTING YOUR WALLET CLIENT TO KEEP YOUR L2 PRIVATE KEY SAFE!\n` +
             `Timestamp: ${timestamp}`;
