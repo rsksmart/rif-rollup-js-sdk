@@ -175,7 +175,7 @@ It is possible to wait until the transactions like Transfer is either:
 
 It is possible to wait until the operations like Deposit is either:
 
-1. Mined on the Ethereum network (with `awaitEthereumTxCommit`)
+1. Mined on the Rootstock network (with `awaitRootstockTxCommit`)
 1. Committed (with `awaitReceipt`) when the state is updated in the RIF Rollup network
 1. Verified (with `awaitVerifyReceipt`) when the state is finalized on the Ethereum
 
@@ -204,10 +204,10 @@ const receiptAfterVerify = await transfer.awaitVerifyReceipt();
 import * as rifRollup from "rif-rollup";
 
 // see deposit example for details
-const deposit = await rifRollup.depositFromETH({..});
+const deposit = await rifRollup.RootstockOperation({..});
 
-// this function will return when deposit request is accepted to the Ethereum.
-const txMinedCommit = await deposit.awaitEthereumTxCommit();
+// this function will return when deposit request is accepted to the Rootstock.
+const txMinedCommit = await deposit.awaitRootstockTxCommit();
 
 // this function will return when deposit is committed to the RIF Rollup chain
 const receiptAfterCommit = await deposit.awaitReceipt();

@@ -9,7 +9,7 @@ export class RifRollupTxError extends Error {
     }
 }
 
-export class ETHOperation {
+export class RootstockOperation {
     state: 'Sent' | 'Mined' | 'Committed' | 'Verified' | 'Failed';
     error?: RifRollupTxError;
     priorityOpId?: BigNumber;
@@ -18,7 +18,7 @@ export class ETHOperation {
         this.state = 'Sent';
     }
 
-    async awaitEthereumTxCommit() {
+    async awaitRootstockTxCommit() {
         if (this.state !== 'Sent') return;
 
         const txReceipt = await this.ethTx.wait();
@@ -41,7 +41,7 @@ export class ETHOperation {
     async awaitReceipt(): Promise<PriorityOperationReceipt> {
         this.throwErrorIfFailedState();
 
-        await this.awaitEthereumTxCommit();
+        await this.awaitRootstockTxCommit();
         if (this.state !== 'Mined') return;
 
         let query: number | string;

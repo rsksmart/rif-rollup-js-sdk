@@ -33,7 +33,7 @@ import { getChangePubkeyLegacyMessage, getChangePubkeyMessage, MAX_TIMESTAMP, is
 import { Transaction, submitSignedTransaction } from './operations';
 import { AbstractWallet } from './abstract-wallet';
 
-export { Transaction, ETHOperation, submitSignedTransaction, submitSignedTransactionsBatch } from './operations';
+export { Transaction, RootstockOperation, submitSignedTransaction, submitSignedTransactionsBatch } from './operations';
 
 export class Wallet extends AbstractWallet {
     protected constructor(

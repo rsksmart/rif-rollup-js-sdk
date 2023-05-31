@@ -19,7 +19,7 @@ import {
 import { Transaction, submitSignedTransaction, submitSignedTransactionsBatch } from './operations';
 import { AbstractWallet } from './abstract-wallet';
 
-export { Transaction, ETHOperation, submitSignedTransaction, submitSignedTransactionsBatch } from './operations';
+export { Transaction, RootstockOperation, submitSignedTransaction, submitSignedTransactionsBatch } from './operations';
 
 export class RemoteWallet extends AbstractWallet {
     private web3Signer: ethers.Signer;

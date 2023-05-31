@@ -31,7 +31,7 @@ import {
     SYNC_MAIN_CONTRACT_INTERFACE,
     getToggle2FAMessage
 } from './utils';
-import { Transaction, ETHOperation } from './operations';
+import { Transaction, RootstockOperation } from './operations';
 
 export abstract class AbstractWallet {
     public provider: SyncProvider;
@@ -459,7 +459,7 @@ export abstract class AbstractWallet {
         amount: BigNumberish;
         ethTxOptions?: ethers.providers.TransactionRequest;
         approveDepositAmountForERC20?: boolean;
-    }): Promise<ETHOperation> {
+    }): Promise<RootstockOperation> {
         const gasPrice = await this.ethSigner().provider.getGasPrice();
 
         const mainRifRollupContract = this.getRifRollupMainContract();
@@ -531,7 +531,7 @@ export abstract class AbstractWallet {
             }
         }
 
-        return new ETHOperation(ethTransaction, this.provider);
+        return new RootstockOperation(ethTransaction, this.provider);
     }
 
     async onchainAuthSigningKey(
@@ -567,7 +567,7 @@ export abstract class AbstractWallet {
         token: TokenLike;
         accountId?: number;
         ethTxOptions?: ethers.providers.TransactionRequest;
-    }): Promise<ETHOperation> {
+    }): Promise<RootstockOperation> {
         const gasPrice = await this.ethSigner().provider.getGasPrice();
 
         let accountId: number = withdraw.accountId != null ? withdraw.accountId : await this.resolveAccountId();
@@ -581,7 +581,7 @@ export abstract class AbstractWallet {
                 gasPrice,
                 ...withdraw.ethTxOptions
             });
-            return new ETHOperation(ethTransaction, this.provider);
+            return new RootstockOperation(ethTransaction, this.provider);
         } catch (e) {
             this.modifyEthersError(e);
         }
@@ -591,7 +591,7 @@ export abstract class AbstractWallet {
         tokenId: number;
         accountId?: number;
         ethTxOptions?: ethers.providers.TransactionRequest;
-    }): Promise<ETHOperation> {
+    }): Promise<RootstockOperation> {
         const gasPrice = await this.ethSigner().provider.getGasPrice();
 
         let accountId: number = withdrawNFT.accountId != null ? withdrawNFT.accountId : await this.resolveAccountId();
@@ -604,7 +604,7 @@ export abstract class AbstractWallet {
                 gasPrice,
                 ...withdrawNFT.ethTxOptions
             });
-            return new ETHOperation(ethTransaction, this.provider);
+            return new RootstockOperation(ethTransaction, this.provider);
         } catch (e) {
             this.modifyEthersError(e);
         }
