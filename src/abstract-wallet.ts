@@ -241,7 +241,7 @@ export abstract class AbstractWallet {
 
     // Withdraw part
 
-    abstract signWithdrawFromSyncToEthereum(withdraw: {
+    abstract signWithdrawFromSyncToRootstock(withdraw: {
         ethAddress: string;
         token: TokenLike;
         amount: BigNumberish;
@@ -251,7 +251,7 @@ export abstract class AbstractWallet {
         validUntil?: number;
     }): Promise<SignedTransaction>;
 
-    abstract withdrawFromSyncToEthereum(withdraw: {
+    abstract withdrawFromSyncToRootstock(withdraw: {
         ethAddress: string;
         token: TokenLike;
         amount: BigNumberish;
@@ -453,7 +453,7 @@ export abstract class AbstractWallet {
         }
     }
 
-    async depositToSyncFromEthereum(deposit: {
+    async depositToSyncFromRootstock(deposit: {
         depositTo: Address;
         token: TokenLike;
         amount: BigNumberish;
