@@ -31,7 +31,7 @@ import {
     SYNC_MAIN_CONTRACT_INTERFACE,
     getToggle2FAMessage
 } from './utils';
-import { Transaction, ETHOperation } from './operations';
+import { Transaction, RootstockOperation } from './operations';
 
 export abstract class AbstractWallet {
     public provider: SyncProvider;
@@ -105,7 +105,7 @@ export abstract class AbstractWallet {
         } else {
             const accountState = await this.getAccountState();
             if (!accountState.id) {
-                throw new Error("Can't resolve account id from the zkSync node");
+                throw new Error("Can't resolve account id from the RIF Rollup node");
             }
             return accountState.id;
         }
@@ -113,7 +113,7 @@ export abstract class AbstractWallet {
 
     async isCorrespondingSigningKeySet(): Promise<boolean> {
         if (!this.syncSignerConnected()) {
-            throw new Error('ZKSync signer is required for current pubkey calculation.');
+            throw new Error('RIF Rollup signer is required for current pubkey calculation.');
         }
         const currentPubKeyHash = await this.getCurrentPubKeyHash();
         const signerPubKeyHash = await this.syncSignerPubKeyHash();
@@ -122,7 +122,7 @@ export abstract class AbstractWallet {
 
     async isSigningKeySet(): Promise<boolean> {
         if (!this.syncSignerConnected()) {
-            throw new Error('ZKSync signer is required for current pubkey calculation.');
+            throw new Error('RIF Rollup signer is required for current pubkey calculation.');
         }
         const currentPubKeyHash = await this.getCurrentPubKeyHash();
         const zeroPubKeyHash = 'sync:0000000000000000000000000000000000000000';
@@ -189,11 +189,11 @@ export abstract class AbstractWallet {
     // Operations below each come in three signatures:
     // - `getXXX`: get the full transaction with L2 signature.
     // - `signXXX`: get the full transaction with both L2 and L1 signatures.
-    // - `XXX` or `syncXXX`: sign and send the transaction to zkSync.
+    // - `XXX` or `syncXXX`: sign and send the transaction to RIF Rollup.
     //
     // All these methods accept incomplete transaction data, and if they return signed transaction, this transaction will
     // be "completed". "Incomplete transaction data" means that e.g. account IDs are not resolved or tokens are represented
-    // by their names/addresses rather than by their IDs in the zkSync network.
+    // by their names/addresses rather than by their IDs in the RIF Rollup network.
     //
 
     // Transfer part
@@ -241,7 +241,7 @@ export abstract class AbstractWallet {
 
     // Withdraw part
 
-    abstract signWithdrawFromSyncToEthereum(withdraw: {
+    abstract signWithdrawFromSyncToRootstock(withdraw: {
         ethAddress: string;
         token: TokenLike;
         amount: BigNumberish;
@@ -251,7 +251,7 @@ export abstract class AbstractWallet {
         validUntil?: number;
     }): Promise<SignedTransaction>;
 
-    abstract withdrawFromSyncToEthereum(withdraw: {
+    abstract withdrawFromSyncToRootstock(withdraw: {
         ethAddress: string;
         token: TokenLike;
         amount: BigNumberish;
@@ -453,22 +453,22 @@ export abstract class AbstractWallet {
         }
     }
 
-    async depositToSyncFromEthereum(deposit: {
+    async depositToSyncFromRootstock(deposit: {
         depositTo: Address;
         token: TokenLike;
         amount: BigNumberish;
         ethTxOptions?: ethers.providers.TransactionRequest;
         approveDepositAmountForERC20?: boolean;
-    }): Promise<ETHOperation> {
+    }): Promise<RootstockOperation> {
         const gasPrice = await this.ethSigner().provider.getGasPrice();
 
-        const mainZkSyncContract = this.getZkSyncMainContract();
+        const mainRifRollupContract = this.getRifRollupMainContract();
 
         let ethTransaction;
 
         if (isTokenETH(deposit.token)) {
             try {
-                ethTransaction = await mainZkSyncContract.depositETH(deposit.depositTo, {
+                ethTransaction = await mainRifRollupContract.depositETH(deposit.depositTo, {
                     value: BigNumber.from(deposit.amount),
                     gasLimit: BigNumber.from(ETH_RECOMMENDED_DEPOSIT_GAS_LIMIT),
                     gasPrice,
@@ -508,7 +508,7 @@ export abstract class AbstractWallet {
             const txRequest = args[args.length - 1] as ethers.providers.TransactionRequest;
             if (txRequest.gasLimit == null) {
                 try {
-                    const gasEstimate = await mainZkSyncContract.estimateGas.depositERC20(...args).then(
+                    const gasEstimate = await mainRifRollupContract.estimateGas.depositERC20(...args).then(
                         (estimate) => estimate,
                         () => BigNumber.from('0')
                     );
@@ -525,13 +525,13 @@ export abstract class AbstractWallet {
             }
 
             try {
-                ethTransaction = await mainZkSyncContract.depositERC20(...args);
+                ethTransaction = await mainRifRollupContract.depositERC20(...args);
             } catch (e) {
                 this.modifyEthersError(e);
             }
         }
 
-        return new ETHOperation(ethTransaction, this.provider);
+        return new RootstockOperation(ethTransaction, this.provider);
     }
 
     async onchainAuthSigningKey(
@@ -539,7 +539,7 @@ export abstract class AbstractWallet {
         ethTxOptions?: ethers.providers.TransactionRequest
     ): Promise<ContractTransaction> {
         if (!this.syncSignerConnected()) {
-            throw new Error('ZKSync signer is required for current pubkey calculation.');
+            throw new Error('RIF Rollup signer is required for current pubkey calculation.');
         }
 
         const currentPubKeyHash = await this.getCurrentPubKeyHash();
@@ -551,10 +551,10 @@ export abstract class AbstractWallet {
 
         const numNonce = await this.getNonce(nonce);
 
-        const mainZkSyncContract = this.getZkSyncMainContract();
+        const mainRifRollupContract = this.getRifRollupMainContract();
 
         try {
-            return mainZkSyncContract.setAuthPubkeyHash(newPubKeyHash.replace('sync:', '0x'), numNonce, {
+            return mainRifRollupContract.setAuthPubkeyHash(newPubKeyHash.replace('sync:', '0x'), numNonce, {
                 gasLimit: BigNumber.from('200000'),
                 ...ethTxOptions
             });
@@ -567,21 +567,21 @@ export abstract class AbstractWallet {
         token: TokenLike;
         accountId?: number;
         ethTxOptions?: ethers.providers.TransactionRequest;
-    }): Promise<ETHOperation> {
+    }): Promise<RootstockOperation> {
         const gasPrice = await this.ethSigner().provider.getGasPrice();
 
         let accountId: number = withdraw.accountId != null ? withdraw.accountId : await this.resolveAccountId();
 
-        const mainZkSyncContract = this.getZkSyncMainContract();
+        const mainRifRollupContract = this.getRifRollupMainContract();
 
         const tokenAddress = this.provider.tokenSet.resolveTokenAddress(withdraw.token);
         try {
-            const ethTransaction = await mainZkSyncContract.requestFullExit(accountId, tokenAddress, {
+            const ethTransaction = await mainRifRollupContract.requestFullExit(accountId, tokenAddress, {
                 gasLimit: BigNumber.from('500000'),
                 gasPrice,
                 ...withdraw.ethTxOptions
             });
-            return new ETHOperation(ethTransaction, this.provider);
+            return new RootstockOperation(ethTransaction, this.provider);
         } catch (e) {
             this.modifyEthersError(e);
         }
@@ -591,20 +591,20 @@ export abstract class AbstractWallet {
         tokenId: number;
         accountId?: number;
         ethTxOptions?: ethers.providers.TransactionRequest;
-    }): Promise<ETHOperation> {
+    }): Promise<RootstockOperation> {
         const gasPrice = await this.ethSigner().provider.getGasPrice();
 
         let accountId: number = withdrawNFT.accountId != null ? withdrawNFT.accountId : await this.resolveAccountId();
 
-        const mainZkSyncContract = this.getZkSyncMainContract();
+        const mainRifRollupContract = this.getRifRollupMainContract();
 
         try {
-            const ethTransaction = await mainZkSyncContract.requestFullExitNFT(accountId, withdrawNFT.tokenId, {
+            const ethTransaction = await mainRifRollupContract.requestFullExitNFT(accountId, withdrawNFT.tokenId, {
                 gasLimit: BigNumber.from('500000'),
                 gasPrice,
                 ...withdrawNFT.ethTxOptions
             });
-            return new ETHOperation(ethTransaction, this.provider);
+            return new RootstockOperation(ethTransaction, this.provider);
         } catch (e) {
             this.modifyEthersError(e);
         }
@@ -635,11 +635,11 @@ export abstract class AbstractWallet {
     //
 
     async isOnchainAuthSigningKeySet(nonce: Nonce = 'committed'): Promise<boolean> {
-        const mainZkSyncContract = this.getZkSyncMainContract();
+        const mainRifRollupContract = this.getRifRollupMainContract();
 
         const numNonce = await this.getNonce(nonce);
         try {
-            const onchainAuthFact = await mainZkSyncContract.authFacts(this.address(), numNonce);
+            const onchainAuthFact = await mainRifRollupContract.authFacts(this.address(), numNonce);
             return onchainAuthFact !== '0x0000000000000000000000000000000000000000000000000000000000000000';
         } catch (e) {
             this.modifyEthersError(e);
@@ -666,7 +666,7 @@ export abstract class AbstractWallet {
         }
     }
 
-    getZkSyncMainContract() {
+    getRifRollupMainContract() {
         return new ethers.Contract(
             this.provider.contractAddress.mainContract,
             SYNC_MAIN_CONTRACT_INTERFACE,
@@ -683,7 +683,7 @@ export abstract class AbstractWallet {
             const ethNetwork = await this.ethSigner().provider.getNetwork();
             if (l1ChainId(this.provider.network) !== ethNetwork.chainId) {
                 throw new Error(
-                    `ETH network ${ethNetwork.name} and ZkSync network ${this.provider.network} don't match`
+                    `Rootstock network ${ethNetwork.name} and RIF Rollup network ${this.provider.network} don't match`
                 );
             }
         }
@@ -711,7 +711,7 @@ export abstract class AbstractWallet {
         if (this.accountId === undefined) {
             const accountIdFromServer = await this.getAccountId();
             if (accountIdFromServer == null) {
-                throw new Error(`Failed to ${actionName}: Account does not exist in the zkSync network`);
+                throw new Error(`Failed to ${actionName}: Account does not exist in the RIF Rollup network`);
             } else {
                 this.accountId = accountIdFromServer;
             }

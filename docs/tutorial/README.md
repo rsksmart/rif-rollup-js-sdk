@@ -190,7 +190,7 @@ const transferReceipt = await transfer.awaitReceipt();
 ## Withdrawing funds back to Rootstock
 
 ```typescript
-const withdraw = await syncWallet2.withdrawFromSyncToEthereum({
+const withdraw = await syncWallet2.withdrawFromSyncToRootstock({
   ethAddress: rbtcWallet2.address,
   token: 'RBTC',
   amount: ethers.utils.parseEther('0.998')

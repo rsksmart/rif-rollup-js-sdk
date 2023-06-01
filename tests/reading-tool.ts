@@ -6,7 +6,7 @@ function configPath(postfix: string) {
 }
 
 function loadConfig(filepath: string) {
-    return JSON.parse(
+  return JSON.parse(
         fs.readFileSync(filepath, {
             encoding: 'utf-8'
         })

@@ -1,10 +1,18 @@
-# JavaScript SDK for RIF Aggregation
+# JavaScript SDK
 
-**RIF Aggregation** is a scaling and privacy engine for RSK. Its current functionality scope includes low gas transfers
-of RBTC and ERC20 tokens in the RSK network.
+This section contains documentation for the JavaScript SDK for RIF Rollup.
 
-This document is a description of the JS library that can be used to interact with RIF Aggregation.
+## Resources
 
-## Usage
+<!-- - [RIF Rollup Lite Block Explorer](https://rifrollupscan.io/) -->
+- [RIF Rollup JS SDK Github Page](https://github.com/rsksmart/rif-rollup-js-sdk)
 
-Full reference on how to use the library can be found [here](https://zksync.io/api/sdk/js/).
+## Table of contents
+
+- [Getting started](./docs/tutorial/)
+- [Providers](./docs/providers)
+- [Accounts](./docs/accounts)
+- [Utils](./docs/utils)
+- [Types](./docs/types)
+- [Appendix A: Using bundle in a browser](./browser-bundled)
+

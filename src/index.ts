@@ -1,6 +1,6 @@
-export { Wallet, Transaction, ETHOperation, submitSignedTransaction, submitSignedTransactionsBatch } from './wallet';
+export { Wallet, Transaction, RootstockOperation, submitSignedTransaction, submitSignedTransactionsBatch } from './wallet';
 export { RemoteWallet } from './remote-wallet';
-export { Provider, ETHProxy, getDefaultProvider } from './provider';
+export { Provider, RBTCProxy, getDefaultProvider } from './provider';
 export { RestProvider, getDefaultRestProvider } from './rest-provider';
 export { SyncProvider } from './provider-interface';
 export { Signer, Create2WalletSigner, No2FAWalletSigner } from './signer';
