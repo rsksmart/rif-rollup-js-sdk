@@ -1,5 +1,5 @@
 {
-    "name": "rif-rollup-js-sdk",
+    "name": "@rsksmart/rif-rollup-js-sdk",
     "version": "0.13.1",
     "license": "MIT",
     "main": "build/index.js",
