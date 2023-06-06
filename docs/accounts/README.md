@@ -377,7 +377,7 @@ the RIF Rollup network, use `awaitReceipt`(see [utils]).
 > Signature
 
 ```typescript
-async depositToSyncFromEthereum(deposit: {
+async depositToSyncFromRootstock(deposit: {
     depositTo: Address;
     token: TokenLike;
     amount: BigNumberish;
@@ -409,7 +409,7 @@ import { ethers } from "ethers";
 
 const syncWallet = ..; // Setup RIF Rollup wallet from ethers.Signer.
 
-const depositPriorityOperation = await syncWallet.depositToSyncFromEthereum({
+const depositPriorityOperation = await syncWallet.depositToSyncFromRootstock({
   depositTo: "0x2d5bf7a3ab29f0ff424d738a83f9b0588bc9241e",
   token: "ETH",
   amount: ethers.utils.parseEther("1.0"),
@@ -880,7 +880,7 @@ The transaction has to be verified until funds are available on the rootstock wa
 > Signature
 
 ```typescript
-async withdrawFromSyncToEthereum(withdraw: {
+async withdrawFromSyncToRootstock(withdraw: {
   ethAddress: string;
   token: TokenLike;
   amount: BigNumberish;
@@ -932,7 +932,7 @@ to consider transaction fee in advance because transaction can become invalid if
 > Signature
 
 ```typescript
-async signWithdrawFromSyncToEthereum(withdraw: {
+async signWithdrawFromSyncToRootstock(withdraw: {
   ethAddress: string;
   token: TokenLike;
   amount: BigNumberish;

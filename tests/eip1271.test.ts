@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import * as ethers from 'ethers';
 import { loadTestConfig } from './reading-tool';
-import * as zkUtils from '../src/utils';
+import * as rifRollUpUtils from '../src/utils';
 
 const testConfig = loadTestConfig(false);
 const providerUrl = "http://localhost:4444";
@@ -12,10 +12,10 @@ describe('EIP1271 signature check', function () {
     it('Test EIP1271 signature', async () => {
         const initialMessage = 'hello-world';
         const initialMessageBytes = ethers.utils.toUtf8Bytes(initialMessage);
-        const message = zkUtils.getSignedBytesFromMessage(initialMessage, false);
+        const message = rifRollUpUtils.getSignedBytesFromMessage(initialMessage, false);
 
-        const signature = await zkUtils.signMessagePersonalAPI(ethSigner, message);
-        const signatureValid = await zkUtils.verifyERC1271Signature(
+        const signature = await rifRollUpUtils.signMessagePersonalAPI(ethSigner, message);
+        const signatureValid = await rifRollUpUtils.verifyERC1271Signature(
             testConfig.eip1271.contract_address,
             initialMessageBytes,
             signature,
@@ -28,11 +28,11 @@ describe('EIP1271 signature check', function () {
     it('Test EIP1271 prefix detection', async () => {
         const initialMessage = 'hello-world';
         const initialMessageBytes = ethers.utils.toUtf8Bytes(initialMessage);
-        const message = zkUtils.getSignedBytesFromMessage(initialMessage, false);
+        const message = rifRollUpUtils.getSignedBytesFromMessage(initialMessage, false);
 
         // Sign with prefix.
-        const signaturePrefixed = await zkUtils.signMessagePersonalAPI(ethSigner, message);
-        const signatureTypePrefixed = await zkUtils.getEthSignatureType(
+        const signaturePrefixed = await rifRollUpUtils.signMessagePersonalAPI(ethSigner, message);
+        const signatureTypePrefixed = await rifRollUpUtils.getEthSignatureType(
             provider,
             message,
             signaturePrefixed,
@@ -47,7 +47,7 @@ describe('EIP1271 signature check', function () {
         const pkSigner = new ethers.utils.SigningKey(testConfig.eip1271.owner_private_key);
         const messageHash = ethers.utils.arrayify(ethers.utils.keccak256(message));
         const signatureNotPrefixed = ethers.utils.joinSignature(pkSigner.signDigest(messageHash));
-        const signatureTypeNotPrefixed = await zkUtils.getEthSignatureType(
+        const signatureTypeNotPrefixed = await rifRollUpUtils.getEthSignatureType(
             provider,
             message,
             signatureNotPrefixed,
@@ -55,7 +55,7 @@ describe('EIP1271 signature check', function () {
         );
 
         // Sanity check. We've signed the message manually, so it's better to check that it's correct...
-        const signatureNotPrefixedValid = await zkUtils.verifyERC1271Signature(
+        const signatureNotPrefixedValid = await rifRollUpUtils.verifyERC1271Signature(
             testConfig.eip1271.contract_address,
             initialMessageBytes,
             signatureNotPrefixed,

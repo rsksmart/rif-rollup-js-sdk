@@ -9,7 +9,7 @@ import {
 } from './utils';
 
 /**
- * Wrapper around `ethers.Signer` which provides convenient methods to get and sign messages required for zkSync.
+ * Wrapper around `ethers.Signer` which provides convenient methods to get and sign messages required for RIF Rollup.
  */
 export class EthMessageSigner {
     constructor(private ethSigner: ethers.Signer, private ethSignerType?: EthSignerType) {}

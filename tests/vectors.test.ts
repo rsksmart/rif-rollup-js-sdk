@@ -1,6 +1,6 @@
 import { assert, expect } from 'chai';
 import { BigNumber, utils, Wallet } from 'ethers';
-import * as zksync from '../src';
+import * as rifRollup from '../src';
 
 import {
     closestPackableTransactionAmount,
@@ -113,8 +113,8 @@ describe('Utils tests', function () {
 describe(txVectors.description, function () {
     async function getSigner(ethPrivateKey) {
         const ethWallet = new Wallet(ethPrivateKey);
-        const { signer } = await zksync.Signer.fromETHSignature(ethWallet);
-        const ethMessageSigner = new zksync.EthMessageSigner(ethWallet, {
+        const { signer } = await rifRollup.Signer.fromETHSignature(ethWallet);
+        const ethMessageSigner = new rifRollup.EthMessageSigner(ethWallet, {
             verificationMethod: 'ECDSA',
             isSignedMsgPrefixed: true
         });
@@ -155,7 +155,7 @@ describe(txVectors.description, function () {
             const { signer, ethMessageSigner } = await getSigner(privateKey);
 
             if (txType === 'Order') {
-                const signBytes = zksync.utils.serializeOrder(order);
+                const signBytes = rifRollup.utils.serializeOrder(order);
                 const { signature } = await signer.signSyncOrder(order);
 
                 const { signature: ethSignature } = await ethMessageSigner.ethSignOrder(ethSignData);
@@ -180,7 +180,7 @@ describe(txVectors.description, function () {
             const { signer, ethMessageSigner } = await getSigner(privateKey);
 
             if (txType === 'Swap') {
-                const signBytes = await zksync.utils.serializeSwap(order);
+                const signBytes = await rifRollup.utils.serializeSwap(order);
                 const { signature } = await signer.signSyncSwap(order);
 
                 const { signature: ethSignature } = await ethMessageSigner.ethSignSwap(ethSignData);

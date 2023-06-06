@@ -22,10 +22,11 @@ export default [
         output: {
             file: 'dist/main.js',
             format: 'iife',
-            name: 'zksync',
+            name: 'rif-rollup',
             globals: {
                 ethers: 'ethers'
-            }
+            },
+            extend: true
         },
         external: ['ethers'],
         plugins: [

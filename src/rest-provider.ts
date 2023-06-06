@@ -101,7 +101,7 @@ export class RestProvider extends SyncProvider {
             return response.result;
         } else {
             throw new RESTError(
-                `zkSync API response error: errorType: ${response.error.errorType};` +
+                `RIF Rollup API response error: errorType: ${response.error.errorType};` +
                     ` code ${response.error.code}; message: ${response.error.message}`,
                 response.error
             );
