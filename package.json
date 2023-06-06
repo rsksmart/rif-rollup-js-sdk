@@ -1,10 +1,6 @@
 {
-    "name": "@rsksmart/rif-rollup-sdk-js",
-    "version": "0.0.2",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/rsksmart/rif-rollup-js-sdk"
-    },
+    "name": "@rsksmart/rif-rollup-js-sdk",
+    "version": "0.13.1",
     "license": "MIT",
     "main": "build/index.js",
     "types": "build/index.d.ts",
