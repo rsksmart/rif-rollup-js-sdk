@@ -185,7 +185,7 @@ verifying implies await for commit.
 > Awaiting for transaction.
 
 ```typescript
-import * as rifRollup from "rif-rollup";
+import * as rifRollup from "rif-rollup-js-sdk";
 const wallet = ..; // create RIF Rollup Wallet
 
 // see transfer example for details
@@ -201,7 +201,7 @@ const receiptAfterVerify = await transfer.awaitVerifyReceipt();
 > Awaiting for priority operation
 
 ```typescript
-import * as rifRollup from "rif-rollup";
+import * as rifRollup from "rif-rollup-js-sdk";
 
 // see deposit example for details
 const deposit = await rifRollup.RootstockOperation({..});
@@ -219,7 +219,7 @@ const receiptAfterVerify = await deposit.awaitVerifyReceipt();
 > Sending and awaiting for the previously signed transaction.
 
 ```typescript
-import * as rifRollup from "rif-rollup";
+import * as rifRollup from "rif-rollup-js-sdk";
 const provider = ..; // create RIF Rollup Provider
 const wallet = ..; // create RIF Rollup Wallet
 
