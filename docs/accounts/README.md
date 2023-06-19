@@ -85,7 +85,7 @@ static async fromEthSigner(
 > Example
 
 ```typescript
-import * as rifRollup from "rif-rollup";
+import * as rifRollup from "rif-rollup-js-sdk";
 import { ethers } from "ethers";
 
 const ethersProvider = ethers.getDefaultProvider("goerli");
@@ -124,7 +124,7 @@ without them, such as Deposit, Emergency exit and reading the account state.
 > Example
 
 ```typescript
-import * as rifRollup from "rif-rollup";
+import * as rifRollup from "rif-rollup-js-sdk";
 import { ethers } from "ethers";
 
 const ethersProvider = ethers.getDefaultProvider("goerli");
@@ -170,7 +170,7 @@ static async fromCreate2Data(
 > Example
 
 ```typescript
-import * as rifRollup from "rif-rollup";
+import * as rifRollup from "rif-rollup-js-sdk";
 import { ethers } from "ethers";
 
 const syncProvider = await rifRollup.getDefaultProvider("goerli");
@@ -312,7 +312,7 @@ async getEthereumBalance(token: TokenLike): Promise<utils.BigNumber>;
 > Example
 
 ```typescript
-import * as rifRollup from "rif-rollup";
+import * as rifRollup from "rif-rollup-js-sdk";
 import { ethers } from "ethers";
 
 // Setup rifRollup.Wallet with ethers signer/wallet that is connected to ethers provider
@@ -404,7 +404,7 @@ async depositToSyncFromRootstock(deposit: {
 > Example
 
 ```typescript
-import * as rifRollup from "rif-rollup";
+import * as rifRollup from "rif-rollup-js-sdk";
 import { ethers } from "ethers";
 
 const syncWallet = ..; // Setup RIF Rollup wallet from ethers.Signer.
@@ -1078,7 +1078,7 @@ async emergencyWithdraw(withdraw: {
 > Example
 
 ```typescript
-import * as rifRollup from "rif-rollup";
+import * as rifRollup from "rif-rollup-js-sdk";
 import { ethers } from "ethers";
 
 const syncWallet = ..; // Setup RIF Rollup wallet.
@@ -1097,7 +1097,7 @@ Two factor authentification is an additional protection layer enforced by RIF Ro
 [here](/dev/payments/sending_transactions/#_2-factor-authentication).
 
 ```typescript
-import * as rifRollup from "rif-rollup";
+import * as rifRollup from "rif-rollup-js-sdk";
 import { ethers } from "ethers";
 
 const syncWallet = ..; // Setup RIF Rollup wallet with private key or EIP-1271 signing
@@ -1133,7 +1133,7 @@ async withdrawPendingBalance(
 > Example
 
 ```typescript
-import * as rifRollup from "rif-rollup";
+import * as rifRollup from "rif-rollup-js-sdk";
 import { ethers } from "ethers";
 
 const syncWallet = ..; // Setup RIF Rollup wallet.
@@ -1181,7 +1181,7 @@ async withdrawPendingBalances(
 > Example
 
 ```typescript
-import * as rifRollup from "rif-rollup";
+import * as rifRollup from "rif-rollup-js-sdk";
 import { ethers } from "ethers";
 
 const syncWallet = ..; // Setup RIF Rollup wallet.

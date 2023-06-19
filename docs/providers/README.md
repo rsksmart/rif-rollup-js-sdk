@@ -22,7 +22,7 @@ Websocket support will be removed soon due to its instability.
 ### Get default provider for network
 
 ```typescript
-import * as rifRollup from 'rif-rollup';
+import * as rifRollup from 'rif-rollup-js-sdk';
 
 const syncHttpProvider = await rifRollup.getDefaultProvider('goerli');
 ```
@@ -36,7 +36,7 @@ Supported networks are: "goerli", "mainnet", and "localhost".
 > Creating provider over WebSocket transport. This call will create WS connection that should be closed.
 
 ```typescript
-import * as rifRollup from 'rif-rollup';
+import * as rifRollup from 'rif-rollup-js-sdk';
 
 const syncWSProvider = await rifRollup.Provider.newWebsocketProvider('wss://goerli-api.rif-rollup.io/jsrpc-ws');
 
@@ -51,7 +51,7 @@ await syncWSProvider.disconnect();
 > Creating provider over HTTP transport.
 
 ```typescript
-import * as rifRollup from 'rif-rollup';
+import * as rifRollup from 'rif-rollup-js-sdk';
 
 const syncHTTPProvider = await rifRollup.Provider.newHttpProvider('https://goerli-api.rif-rollup.io/jsrpc');
 ```
@@ -76,7 +76,7 @@ async submitTx(tx: any, signature?: TxEthSignature, fastProcessing?: boolean): P
 > Example
 
 ```typescript
-import * as rifRollup from 'rif-rollup';
+import * as rifRollup from 'rif-rollup-js-sdk';
 
 const syncHttpProvider = await rifRollup.getDefaultProvider('goerli');
 const signedTransferTx = {
@@ -134,7 +134,7 @@ For details on individual transactions, see [Submit transaction](#submit-transac
 > Example
 
 ```typescript
-import * as rifRollup from 'rif-rollup';
+import * as rifRollup from 'rif-rollup-js-sdk';
 
 const syncHttpProvider = await rifRollup.getDefaultProvider('goerli');
 const firstTransferTx = {
@@ -185,7 +185,7 @@ async getContractAddress(): Promise<ContractAddress>;
 > Example
 
 ```typescript
-import * as rifRollup from 'rif-rollup';
+import * as rifRollup from 'rif-rollup-js-sdk';
 
 const syncHttpProvider = await rifRollup.getDefaultProvider('goerli');
 
@@ -218,7 +218,7 @@ async getTokens(): Promise<Tokens>;
 > Example
 
 ```typescript
-import * as rifRollup from 'rif-rollup';
+import * as rifRollup from 'rif-rollup-js-sdk';
 
 const syncHttpProvider = await rifRollup.getDefaultProvider('goerli');
 
@@ -307,7 +307,7 @@ async getConfirmationsForEthOpAmount(): Promise<number>;
 > Example
 
 ```typescript
-import * as rifRollup from 'rif-rollup';
+import * as rifRollup from 'rif-rollup-js-sdk';
 
 const syncHttpProvider = await rifRollup.getDefaultProvider('goerli');
 const requiredConfirmationsAmount = await syncHttpProvider.getConfirmationsForEthOpAmount();
@@ -387,7 +387,7 @@ async notifyTransaction(
 > Example
 
 ```typescript
-import * as rifRollup from 'rif-rollup';
+import * as rifRollup from 'rif-rollup-js-sdk';
 
 const syncHttpProvider = await rifRollup.getDefaultProvider('goerli');
 
@@ -458,7 +458,7 @@ deposit).
 > Example
 
 ```typescript
-import * as rifRollup from 'rif-rollup';
+import * as rifRollup from 'rif-rollup-js-sdk';
 
 const syncHttpProvider = await rifRollup.getDefaultProvider('goerli');
 
@@ -561,7 +561,7 @@ async getTokenPrice(
 > Example
 
 ```typescript
-import * as rifRollup from 'rif-rollup';
+import * as rifRollup from 'rif-rollup-js-sdk';
 
 const syncHttpProvider = await rifRollup.getDefaultProvider('goerli');
 const rbtcPrice = await syncHttpProvider.getTokenPrice('RBTC');
@@ -594,7 +594,7 @@ constructor(
 > Example
 
 ```typescript
-import * as rifRollup from 'rif-rollup';
+import * as rifRollup from 'rif-rollup-js-sdk';
 import { ethers } from 'ethers';
 
 const ethersProvider = ethers.getDefaultProvider('goerli');
@@ -624,7 +624,7 @@ async resolveTokenId(token: TokenAddress): Promise<number>;
 > Example
 
 ```typescript
-import * as rifRollup from 'rif-rollup';
+import * as rifRollup from 'rif-rollup-js-sdk';
 import { ethers } from 'ethers';
 
 const ethersProvider = ethers.getDefaultProvider('goerli');

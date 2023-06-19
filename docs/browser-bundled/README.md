@@ -1,10 +1,10 @@
 # Appendix A: Using bundle in a browser
 
-It is possible to use `rif-rollup` in a browser directly.
+It is possible to use `rif-rollup-js-sdk` in a browser directly.
 
-- `ethers@5.0` dependency is required for `rif-rollup` to work.
+- `ethers@5.0` dependency is required for `rif-rollup-js-sdk` to work.
 
-> Example with rif-rollup@0.8.1 fetched from [https://unpkg.com](https://unpkg.com) CDN
+> Example with rif-rollup-js-sdk fetched from [https://unpkg.com](https://unpkg.com) CDN
 
 ```html
 <html>

@@ -10,8 +10,8 @@ In this tutorial we will demonstrate how to:
 ## Adding dependencies
 
 ```bash
-yarn add rif-rollup
-yarn add ethers # ethers is a peer dependency of rif-rollup
+yarn add rif-rollup-js-sdk
+yarn add ethers # ethers is a peer dependency of rif-rollup-js-sdk
 ```
 
 See [Appendix A](../browser-bundled) for how to add library to web project directly from
@@ -22,14 +22,14 @@ See [Appendix A](../browser-bundled) for how to add library to web project direc
 You can import all the content of the RIF Rollup library with the following statement:
 
 ```typescript
-import * as rifRollup from 'rif-rollup';
+import * as rifRollup from 'rif-rollup-js-sdk';
 ```
 
 Note, that it is not actually required to import all of the library. For instance, if you only need the Wallet class,
 you can safely do
 
 ```typescript
-import { Wallet } from 'rif-rollup';
+import { Wallet } from 'rif-rollup-js-sdk';
 ```
 
 But in the rest of the book we will assume that the library was imported the first way to differentiate content imported
