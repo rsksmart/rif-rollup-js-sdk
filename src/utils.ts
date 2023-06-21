@@ -920,8 +920,6 @@ export async function getEthereumBalance(
             ethProvider
         );
 
-        console.log(token, 'isTokenRBTC', isTokenRBTC, 'address',);
-
         balance = await erc20contract.balanceOf(address);
     }
     return balance;
