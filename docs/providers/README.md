@@ -24,12 +24,12 @@ Websocket support will be removed soon due to its instability.
 ```typescript
 import * as rifRollup from 'rif-rollup-js-sdk';
 
-const syncHttpProvider = await rifRollup.getDefaultProvider('goerli');
+const syncHttpProvider = await rifRollup.getDefaultProvider('testnet');
 ```
 
 Used to connect to the common endpoint for the given network over HTTP transport.
 
-Supported networks are: "goerli", "mainnet", and "localhost".
+Supported networks are: "testnet", "mainnet", and "localhost".
 
 ### Create WebSocket provider (it is deprecated and will be removed soon)
 
@@ -38,7 +38,7 @@ Supported networks are: "goerli", "mainnet", and "localhost".
 ```typescript
 import * as rifRollup from 'rif-rollup-js-sdk';
 
-const syncWSProvider = await rifRollup.Provider.newWebsocketProvider('wss://goerli-api.rif-rollup.io/jsrpc-ws');
+const syncWSProvider = await rifRollup.Provider.newWebsocketProvider('wss://dev.aggregation.rifcomputing.net:3031');
 
 // ..
 
@@ -53,7 +53,7 @@ await syncWSProvider.disconnect();
 ```typescript
 import * as rifRollup from 'rif-rollup-js-sdk';
 
-const syncHTTPProvider = await rifRollup.Provider.newHttpProvider('https://goerli-api.rif-rollup.io/jsrpc');
+const syncHTTPProvider = await rifRollup.Provider.newHttpProvider('https://dev.aggregation.rifcomputing.net:3030');
 ```
 
 ### Submit transaction
@@ -78,7 +78,7 @@ async submitTx(tx: any, signature?: TxEthSignature, fastProcessing?: boolean): P
 ```typescript
 import * as rifRollup from 'rif-rollup-js-sdk';
 
-const syncHttpProvider = await rifRollup.getDefaultProvider('goerli');
+const syncHttpProvider = await rifRollup.getDefaultProvider('testnet');
 const signedTransferTx = {
   accountId: 13, // id of the sender account in the RIF Rollup
   type: 'Transfer',
@@ -136,7 +136,7 @@ For details on individual transactions, see [Submit transaction](#submit-transac
 ```typescript
 import * as rifRollup from 'rif-rollup-js-sdk';
 
-const syncHttpProvider = await rifRollup.getDefaultProvider('goerli');
+const syncHttpProvider = await rifRollup.getDefaultProvider('testnet');
 const firstTransferTx = {
   accountId: 13, // id of the sender account in the RIF Rollup
   type: 'Transfer',
@@ -187,7 +187,7 @@ async getContractAddress(): Promise<ContractAddress>;
 ```typescript
 import * as rifRollup from 'rif-rollup-js-sdk';
 
-const syncHttpProvider = await rifRollup.getDefaultProvider('goerli');
+const syncHttpProvider = await rifRollup.getDefaultProvider('testnet');
 
 const contractAddresses = await syncHttpProvider.getContractAddress();
 ```
@@ -220,7 +220,7 @@ async getTokens(): Promise<Tokens>;
 ```typescript
 import * as rifRollup from 'rif-rollup-js-sdk';
 
-const syncHttpProvider = await rifRollup.getDefaultProvider('goerli');
+const syncHttpProvider = await rifRollup.getDefaultProvider('testnet');
 
 const contractAddresses = await syncHttpProvider.getTokens();
 ```
@@ -309,7 +309,7 @@ async getConfirmationsForEthOpAmount(): Promise<number>;
 ```typescript
 import * as rifRollup from 'rif-rollup-js-sdk';
 
-const syncHttpProvider = await rifRollup.getDefaultProvider('goerli');
+const syncHttpProvider = await rifRollup.getDefaultProvider('testnet');
 const requiredConfirmationsAmount = await syncHttpProvider.getConfirmationsForEthOpAmount();
 ```
 
@@ -389,7 +389,7 @@ async notifyTransaction(
 ```typescript
 import * as rifRollup from 'rif-rollup-js-sdk';
 
-const syncHttpProvider = await rifRollup.getDefaultProvider('goerli');
+const syncHttpProvider = await rifRollup.getDefaultProvider('testnet');
 
 const receipt = await syncHttpProvider.notifyTransaction(
   'sync-tx:1111111111111111111111111111111111111111111111111111111111111111',
@@ -460,7 +460,7 @@ deposit).
 ```typescript
 import * as rifRollup from 'rif-rollup-js-sdk';
 
-const syncHttpProvider = await rifRollup.getDefaultProvider('goerli');
+const syncHttpProvider = await rifRollup.getDefaultProvider('testnet');
 
 const receipt = await syncHttpProvider.notifyPriorityOp(
   178, // priority op id
@@ -563,7 +563,7 @@ async getTokenPrice(
 ```typescript
 import * as rifRollup from 'rif-rollup-js-sdk';
 
-const syncHttpProvider = await rifRollup.getDefaultProvider('goerli');
+const syncHttpProvider = await rifRollup.getDefaultProvider('testnet');
 const rbtcPrice = await syncHttpProvider.getTokenPrice('RBTC');
 
 console.log(`Current Rootstock price is ${rbtcPrice} USD`);
@@ -597,8 +597,8 @@ constructor(
 import * as rifRollup from 'rif-rollup-js-sdk';
 import { ethers } from 'ethers';
 
-const ethersProvider = ethers.getDefaultProvider('goerli');
-const syncHttpProvider = await rifRollup.getDefaultProvider('goerli');
+const ethersProvider = ethers.getDefaultProvider('testnet');
+const syncHttpProvider = await rifRollup.getDefaultProvider('testnet');
 
 const rbtcProxy = new rifRollup.RBTCProxy(ethersProvider, syncHttpProvider.contractAddress);
 ```
@@ -627,8 +627,8 @@ async resolveTokenId(token: TokenAddress): Promise<number>;
 import * as rifRollup from 'rif-rollup-js-sdk';
 import { ethers } from 'ethers';
 
-const ethersProvider = ethers.getDefaultProvider('goerli');
-const syncProvider = await rifRollup.getDefaultProvider('goerli');
+const ethersProvider = ethers.getDefaultProvider('testnet');
+const syncProvider = await rifRollup.getDefaultProvider('testnet');
 const rbtcProxy = new rifRollup.RBTCProxy(ethersProvider, syncProvider.contractAddress);
 
 const rbtcId = await rbtcProxy.resolveTokenId('0x0000000000000000000000000000000000000000'); // RBTC token address is 0x0..0

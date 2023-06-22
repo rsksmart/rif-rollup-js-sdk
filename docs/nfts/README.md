@@ -8,7 +8,7 @@ This API reference provides descriptions for all functions regarding NFTs in RIF
 begin with our [NFT tutorial](/dev/nfts) and come back here to reference specific functions.
 
 - [NFTs](#nfts)
-  - [Connect to the Goerli testnet](#connect-to-the-goerli-testnet)
+  - [Connect to testnet](#connect-to-testnet)
   - [Mint NFT](#mint-nft)
   - [Transfer NFT](#transfer-nft)
   - [Swap NFT](#swap-nft)
@@ -20,13 +20,12 @@ begin with our [NFT tutorial](/dev/nfts) and come back here to reference specifi
     - [Get an NFT](#get-an-nft)
     - [Get a Receipt](#get-a-receipt)
 
-## Connect to the Goerli testnet
+## Connect to testnet
 
-The NFTs are also supported on `mainnet` and `goerli` networks. For the purposes of this tutorial, we will use the
-`goerli` testnet.
+The NFTs are also supported on `mainnet` and `testnet` networks. For this tutorial, we will use testnet.
 
 ```typescript
-const syncProvider = await rifRollup.getDefaultProvider('goerli');
+const syncProvider = await rifRollup.getDefaultProvider('testnet');
 ```
 
 ## Mint NFT

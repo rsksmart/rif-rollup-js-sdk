@@ -88,8 +88,8 @@ static async fromEthSigner(
 import * as rifRollup from "rif-rollup-js-sdk";
 import { ethers } from "ethers";
 
-const ethersProvider = ethers.getDefaultProvider("goerli");
-const syncProvider = await rifRollup.getDefaultProvider("goerli");
+const ethersProvider = ethers.getDefaultProvider("testnet");
+const syncProvider = await rifRollup.getDefaultProvider("testnet");
 
 const ethWallet = ethers.Wallet.createRandom().connect(ethersProvider);
 const syncWallet = await rifRollup.Wallet.fromEthSigner(ethWallet, syncProvider);
@@ -127,8 +127,8 @@ without them, such as Deposit, Emergency exit and reading the account state.
 import * as rifRollup from "rif-rollup-js-sdk";
 import { ethers } from "ethers";
 
-const ethersProvider = ethers.getDefaultProvider("goerli");
-const syncProvider = await rifRollup.getDefaultProvider("goerli");
+const ethersProvider = ethers.getDefaultProvider("testnet");
+const syncProvider = await rifRollup.getDefaultProvider("testnet");
 
 const ethWallet = ethers.Wallet.createRandom().connect(ethersProvider);
 const syncWallet = await rifRollup.Wallet.fromEthSignerNoKeys(ethWallet, syncProvider);
@@ -173,7 +173,7 @@ static async fromCreate2Data(
 import * as rifRollup from "rif-rollup-js-sdk";
 import { ethers } from "ethers";
 
-const syncProvider = await rifRollup.getDefaultProvider("goerli");
+const syncProvider = await rifRollup.getDefaultProvider("testnet");
 const signer = await rifRollup.Signer.fromSeed(ethers.utils.randomBytes(32));
 const randomHex = (length: number) => {
   const bytes = ethers.utils.randomBytes(length);
