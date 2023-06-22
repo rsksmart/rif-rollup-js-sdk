@@ -911,7 +911,6 @@ export async function getEthereumBalance(
 ): Promise<BigNumber> {
     let balance: BigNumber;
     if (isTokenRBTC(token)) {
-        console.log(token, 'isTokenRBTC', isTokenRBTC, 'address',);
         balance = await ethProvider.getBalance(address);
     } else {
         const erc20contract = new Contract(
