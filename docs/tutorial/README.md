@@ -40,14 +40,14 @@ from the RIF Rollup and ethers libraries.
 To interact with RIF Rollup network users need to know the endpoint of the operator node.
 
 ```typescript
-const syncProvider = await rifRollup.getDefaultProvider('goerli');
+const syncProvider = await rifRollup.getDefaultProvider('testnet');
 ```
 
 Most operations require some read-only access to the Rootstock network. We use `ethers` library to interact with
 Rootstock.
 
 ```typescript
-const ethersProvider = ethers.getDefaultProvider('goerli');
+const ethersProvider = ethers.getDefaultProvider('testnet');
 ```
 
 ## Creating a Wallet
