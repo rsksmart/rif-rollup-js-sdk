@@ -8,8 +8,8 @@ sidebarDepth: 3
 
 Tokens are identified with
 
-1. symbol (e.g. "ETH", "DAI")
-2. address ("0x0000000000000000000000000000000000000000" for "ETH" or "0xFab46E002BbF0b4509813474841E0716E6730136" for
+1. symbol (e.g. "RBTC", "RIF")
+2. address ("0x0000000000000000000000000000000000000000" for "RBTC" or "0xFab46E002BbF0b4509813474841E0716E6730136" for
    ERC20).
 
 To use the token-related utility functions, `TokenSet` class must be used, token set can be obtained from
@@ -47,7 +47,7 @@ public resolveTokenSymbol(tokenLike: TokenLike): TokenSymbol;
 
 ### Resolve token decimals
 
-Get token decimals (e.g. Ether has 18 decimals, meaning `1.0` ETH is `1e18` wei).
+Get token decimals (e.g. RBTC has 18 decimals, meaning `1.0` RBTC is `1e18` wei).
 
 > Signature
 
@@ -68,8 +68,8 @@ public formatToken(tokenLike: TokenLike, amount: BigNumberish): string;
 > Example
 
 ```typescript
-provider.tokenSet.formatToken('ETH', '1000000000'); // "0.000000001"
-provider.tokenSet.formatToken('USDC', '1000000000'); // "1000.0"
+provider.tokenSet.formatToken('RBTC', '1000000000'); // "0.000000001"
+provider.tokenSet.formatToken('RDOC', '1000000000'); // "1000.0"
 ```
 
 ### Parse amount for token
@@ -85,8 +85,8 @@ public parseToken(tokenLike: TokenLike, amount: string): BigNumber;
 > Example
 
 ```typescript
-provider.tokenSet.parseToken('ETH', '0.000000001'); // '1000000000'
-provider.tokenSet.parseToken('USDC', '1000.0'); // '1000000000'
+provider.tokenSet.parseToken('RBTC', '0.000000001'); // '1000000000'
+provider.tokenSet.parseToken('RDOC', '1000.0'); // '1000000000'
 ```
 
 ## Amount packing
@@ -171,13 +171,13 @@ objects returned from methods that submit transactions.
 It is possible to wait until the transactions like Transfer is either:
 
 1. Committed (with `awaitReceipt`) when the state is updated in the RIF Rollup network
-1. Verified (with `awaitVerifyReceipt`) when the state is finalized on the Ethereum
+2. Verified (with `awaitVerifyReceipt`) when the state is finalized on the Ethereum
 
 It is possible to wait until the operations like Deposit is either:
 
 1. Mined on the Rootstock network (with `awaitRootstockTxCommit`)
-1. Committed (with `awaitReceipt`) when the state is updated in the RIF Rollup network
-1. Verified (with `awaitVerifyReceipt`) when the state is finalized on the Ethereum
+2. Committed (with `awaitReceipt`) when the state is updated in the RIF Rollup network
+3. Verified (with `awaitVerifyReceipt`) when the state is finalized on the Ethereum
 
 Commit comes first, but there is no need to wait for commit if you are interested in the verify since await for
 verifying implies await for commit.

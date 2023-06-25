@@ -15,9 +15,9 @@ It is possible to use `rif-rollup-js-sdk` in a browser directly.
       (async () => {
         const ethWallet = ethers.Wallet.createRandom();
 
-        const zksProvider = await rifRollup.getDefaultProvider('testnet');
+        const zksProvider = await rifRollup.getDefaultProvider(network);
         const rifRollupWallet = await rifRollup.Wallet.fromEthSigner(ethWallet, zksProvider);
-        console.log('ETH balance:', (await rifRollupWallet.getBalance('ETH')).toString());
+        console.log('RBTC balance:', (await rifRollupWallet.getBalance('RBTC')).toString());
 
         const privateKey = await rifRollup.crypto.privateKeyFromSeed(new Uint8Array(32));
         const pubkeyHash = await rifRollup.crypto.privateKeyToPubKeyHash(privateKey);
