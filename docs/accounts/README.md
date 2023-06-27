@@ -9,14 +9,14 @@ sidebarDepth: 4
 [signer]: #signer
 [batch builder]: #batch-builder
 [set signing key transaction]: #changing-account-public-key
-[additional rootstock transaction]: #authorize-new-public-key-using-ethereum-transaction
+[additional Rootstock transaction]: #authorize-new-public-key-using-ethereum-transaction
 [transfer]: #transfer-in-the-rif-rollup
 [withdraw]: #withdraw-token-from-the-rif-rollup
 [get_fee]: ../providers/#get-transaction-fee-from-the-server
 
 <!-- Common footnotes -->
 
-[^signer]: If undefined, `Signer` will be derived from rootstock signature of specific message.
+[^signer]: If undefined, `Signer` will be derived from Rootstock signature of specific message.
 [^acc_id]: If undefined, it will be queried from the server.
 [^ethsig]: If undefined, it will be deduced using the signature output.
 [^undefined]: Returned `undefined` value means that the account does not exist in the state tree.
@@ -24,7 +24,7 @@ sidebarDepth: 4
 [^amount]: To see if amount is packable use [pack amount util](../utils/#closest-packable-amount)
 [^fee]:
 
-If not set, lowest possible fee will be requested from RIF Rollup server. Fees are pain in the same token as the main
+If not set, lowest possible fee will be requested from RIF Rollup server. Fees are paid in the same token as the main
 transaction token. To get how to manually obtain an acceptable fee amount, see [Get transaction fee from the
 server][get_fee]. To see if amount is packable use [pack fee util](../utils/#closest-packable-fee).
 
@@ -37,23 +37,23 @@ When false, `ethers.Signer` is used to create signature, otherwise it is expecte
 
 ## Wallet
 
-`Wallet` object is used to interact with the RIF Rollup network. The wallet has a rootstock address associated with it and the
-user that owns this rootstock account owns a corresponding RIF Rollup account. By ownership of rootstock account we mean
-ability to send rootstock transactions and optionally ability to sign messages.
+`Wallet` object is used to interact with the RIF Rollup network. The wallet has a Rootstock address associated with it and the
+user that owns this Rootstock account owns a corresponding RIF Rollup account. By ownership of Rootstock account we mean
+ability to send Rootstock transactions and optionally ability to sign messages.
 
 Wallet has nonce associated with it and it is used to prevent transaction replay. Only transactions with the nonce that
 is equal to the current nonce of the wallet can be executed.
 
 To create transactions in the RIF Rollup network wallet must have RIF Rollup key pair associated with it. RIF Rollup keys are
 handled by [Signer] object and can be created using different methods, the most convenient way is to create these keys
-by deriving them from rootstock signature of the specific message, this method is used by default if user does not
+by deriving them from Rootstock signature of the specific message. This method is used by default if user does not
 provide `Signer` created using some other method.
 
 For RIF Rollup keys to be valid user should register them once in the RIF Rollup network using [set signing key transaction].
-For rootstock wallets that do not support message signing [additional rootstock transaction] is required. RIF Rollup keys can
+For Rootstock wallets that do not support message signing [additional Rootstock transaction] is required. RIF Rollup keys can
 be changed at any time.
 
-Transactions such as [Transfer] and [Withdraw] are additionally signed using rootstock account of the wallet, this
+Transactions such as [Transfer] and [Withdraw] are additionally signed using Rootstock account of the wallet, this
 signature is used for additional security in case RIF Rollup keys of the wallet are compromised. User is asked to sign
 readable representation of the transaction and signature check is performed when transaction is submitted to RIF Rollup.
 
@@ -73,14 +73,14 @@ static async fromEthSigner(
 
 #### Inputs and outputs
 
-| Name                        | Description                                                                      |
-| --------------------------- | -------------------------------------------------------------------------------- |
-| ethWallet                   | `ethers.Signer` that corresponds to keys that own this account                   |
-| provider                    | RIF Rollup provider that is used for submitting a transaction to the RIF Rollup network. |
-| signer (optional)           | RIF Rollup signer that will be used for transaction signing.[^signer]                |
-| accountId (optional)        | RIF Rollup account id.[^acc_id]                                                      |
-| ethSignatureType (optional) | Type of signature that is produced by `ethWallet`.[^ethsig]                      |
-| returns                     | `rifRollup.Wallet` derived from rootstock wallet (`ethers.Signer`)                   |
+| Name                        | Description                                                                             |
+| --------------------------- | --------------------------------------------------------------------------------------- |
+| ethWallet                   | `ethers.Signer` that corresponds to keys that own this account                          |
+| provider                    | RIF Rollup provider that is used for submitting a transaction to the RIF Rollup network.|
+| signer (optional)           | RIF Rollup signer that will be used for transaction signing.[^signer]                   |
+| accountId (optional)        | RIF Rollup account id.[^acc_id]                                                         |
+| ethSignatureType (optional) | Type of signature that is produced by `ethWallet`.[^ethsig]                             |
+| returns                     | `rifRollup.Wallet` derived from Rootstock wallet (`ethers.Signer`)                      |
 
 > Example
 
@@ -88,8 +88,8 @@ static async fromEthSigner(
 import * as rifRollup from "rif-rollup-js-sdk";
 import { ethers } from "ethers";
 
-const ethersProvider = ethers.getDefaultProvider("testnet");
-const syncProvider = await rifRollup.getDefaultProvider("testnet");
+const ethersProvider = ethers.getDefaultProvider(network);
+const syncProvider = await rifRollup.getDefaultProvider(network);
 
 const ethWallet = ethers.Wallet.createRandom().connect(ethersProvider);
 const syncWallet = await rifRollup.Wallet.fromEthSigner(ethWallet, syncProvider);
@@ -113,13 +113,13 @@ without them, such as Deposit, Emergency exit and reading the account state.
 
 #### Inputs and outputs
 
-| Name                        | Description                                                                      |
-| --------------------------- | -------------------------------------------------------------------------------- |
-| ethWallet                   | `ethers.Signer` that corresponds to keys that own this account                   |
-| provider                    | RIF Rollup provider that is used for submitting a transaction to the RIF Rollup network. |
-| accountId (optional)        | RIF Rollup account id.[^acc_id]                                                      |
-| ethSignatureType (optional) | Type of signature that is produced by `ethWallet`.[^ethsig]                      |
-| returns                     | `rifRollup.Wallet` derived from rootstock wallet (`ethers.Signer`)                   |
+| Name                        | Description                                                                             |
+| --------------------------- | --------------------------------------------------------------------------------------- |
+| ethWallet                   | `ethers.Signer` that corresponds to keys that own this account                          |
+| provider                    | RIF Rollup provider that is used for submitting a transaction to the RIF Rollup network.|
+| accountId (optional)        | RIF Rollup account id.[^acc_id]                                                         |
+| ethSignatureType (optional) | Type of signature that is produced by `ethWallet`.[^ethsig]                             |
+| returns                     | `rifRollup.Wallet` derived from Rootstock wallet (`ethers.Signer`)                      |
 
 > Example
 
@@ -127,8 +127,8 @@ without them, such as Deposit, Emergency exit and reading the account state.
 import * as rifRollup from "rif-rollup-js-sdk";
 import { ethers } from "ethers";
 
-const ethersProvider = ethers.getDefaultProvider("testnet");
-const syncProvider = await rifRollup.getDefaultProvider("testnet");
+const ethersProvider = ethers.getDefaultProvider(network);
+const syncProvider = await rifRollup.getDefaultProvider(network);
 
 const ethWallet = ethers.Wallet.createRandom().connect(ethersProvider);
 const syncWallet = await rifRollup.Wallet.fromEthSignerNoKeys(ethWallet, syncProvider);
@@ -140,7 +140,7 @@ This way you can create a wallet, which corresponding L1 account could be create
 `syncSigner` pubKeyHash is encoded as a part of the salt for CREATE2. Note that you do not need to manually add it to
 the `saltArg` of the `create2Data` as it is done automatically.
 
-Such wallets are not required to provide rootstock signatures for transactions. Unlike the `ECDSA` wallets, which have to
+Such wallets are not required to provide Rootstock signatures for transactions. Unlike the `ECDSA` wallets, which have to
 verify the signature for ChangePubKey onchain, `CREATE2` wallets only require to check that the pubKeyHash is included
 in the CREATE2 digest. Thus, the ChangePubKey costs less for this kind of account than for the `ECDSA` one, but that
 comes with a limitation: the L2 private key can not be changed. Also, this type of account can not be used to onboard
@@ -159,13 +159,13 @@ static async fromCreate2Data(
 
 #### Inputs and outputs
 
-| Name                 | Description                                                                      |
-| -------------------- | -------------------------------------------------------------------------------- |
-| syncSigner           | RIF Rollup signer that will be used for transaction signing.[^signer]                |
+| Name                 | Description                                                                              |
+| -------------------- | ---------------------------------------------------------------------------------------- |
+| syncSigner           | RIF Rollup signer that will be used for transaction signing.[^signer]                    |
 | provider             | RIF Rollup provider that is used for submitting a transaction to the RIF Rollup network. |
-| create2Data          | Data out of which the CREATE2 algorithm would derive the address.                |
-| accountId (optional) | RIF Rollup account id.[^acc_id]                                                      |
-| returns              | `rifRollup.Wallet` derived from rootstock wallet (`ethers.Signer`)                   |
+| create2Data          | Data out of which the CREATE2 algorithm would derive the address.                        |
+| accountId (optional) | RIF Rollup account id.[^acc_id]                                                          |
+| returns              | `rifRollup.Wallet` derived from Rootstock wallet (`ethers.Signer`)                       |
 
 > Example
 
@@ -173,7 +173,7 @@ static async fromCreate2Data(
 import * as rifRollup from "rif-rollup-js-sdk";
 import { ethers } from "ethers";
 
-const syncProvider = await rifRollup.getDefaultProvider("testnet");
+const syncProvider = await rifRollup.getDefaultProvider(network);
 const signer = await rifRollup.Signer.fromSeed(ethers.utils.randomBytes(32));
 const randomHex = (length: number) => {
   const bytes = ethers.utils.randomBytes(length);
@@ -203,11 +203,11 @@ Starting from `0.12.0` version of our SDK we support `remote json rpc signer`. T
 
 #### Inputs and outputs
 
-| Name                 | Description                                                                               |
-| -------------------- | ------------------------------------------------------------------------------------------|
-| web3Provider         | A provider that is connected to an appropriate wallet, such as Argent RIF Rollup L2 Wallet.   |
-| provider             | RIF Rollup provider that is used for submitting a transaction to the RIF Rollup network.          |
-| accountId (optional) | RIF Rollup account id.[^acc_id]                                                               |
+| Name                 | Description                                                                                 |
+| -------------------- | ------------------------------------------------------------------------------------------- |
+| web3Provider         | A provider that is connected to an appropriate wallet, such as Argent RIF Rollup L2 Wallet. |
+| provider             | RIF Rollup provider that is used for submitting a transaction to the RIF Rollup network.    |
+| accountId (optional) | RIF Rollup account id.[^acc_id]                                                             |
 
 
 ### Get account state
@@ -238,8 +238,8 @@ async getAccountId(): Promise<number | undefined>;
 
 #### Inputs and outputs
 
-| Name    | Description                                                    |
-| ------- | -------------------------------------------------------------- |
+| Name    | Description                                                        |
+| ------- | ------------------------------------------------------------------ |
 | returns | Numerical account ID in the the RIF Rollup tree state.[^undefined] |
 
 ### Get account nonce
@@ -284,8 +284,8 @@ async getBalance(
 ```typescript
 const wallet = ..; // setup wallet
 
-// Get committed rootstock balance.
-const ethCommittedBalance = await getBalance("ETH");
+// Get committed Rootstock balance.
+const ethCommittedBalance = await getBalance("RBTC");
 
 // Get verified ERC20 token balance.
 const erc20VerifiedBalance = await getBalance("0xFab46E002BbF0b4509813474841E0716E6730136", "verified");
@@ -318,7 +318,7 @@ import { ethers } from "ethers";
 // Setup rifRollup.Wallet with ethers signer/wallet that is connected to ethers provider
 const wallet = ..;
 
-const ethOnChainBalance = await wallet.getEthereumBalance("ETH");
+const ethOnChainBalance = await wallet.getEthereumBalance("RBTC");
 ```
 
 ### Unlocking ERC20 deposits
@@ -339,7 +339,7 @@ async approveERC20TokenDeposits(
 | ----------------------------------- | --------------------------------------------------- |
 | token                               | ERC20 token                                         |
 | max_erc20_approve_amount (optional) | Amount of token to be unlocked. Infinite by default |
-| returns                             | Handle for the rootstock transaction.                |
+| returns                             | Handle for the Rootstock transaction.               |
 
 > Signature
 
@@ -358,13 +358,13 @@ async isERC20DepositsApproved(
 
 ### Deposit token to Sync
 
-Moves funds from the rootstock account to the RIF Rollup account.
+Moves funds from the Rootstock account to the RIF Rollup account.
 
 To do the ERC20 token transfer, this token transfer should be approved. User can make ERC20 deposits approved forever
 using [unlocking ERC20 token], or the user can approve the exact amount (required for a deposit) upon each deposit, but
 this is not recommended.
 
-Once the operation is committed to the rootstock network, we have to wait for a certain amount of confirmations (see
+Once the operation is committed to the Rootstock network, we have to wait for a certain amount of confirmations (see
 [provider docs] for exact number) before accepting it in the RIF Rollup network. After the transaction is committed to the
 RIF Rollup network, funds are already usable by the recipient, meaning that there is no need to wait for verification before
 proceeding unless additional confirmation is required for your application. To wait for the transaction commitment on
@@ -391,10 +391,10 @@ async depositToSyncFromRootstock(deposit: {
 
 | Name                                            | Description                                                        |
 | ----------------------------------------------- | ------------------------------------------------------------------ |
-| deposit.depositTo                               | RIF Rollup account address of the receiver                             |
+| deposit.depositTo                               | RIF Rollup account address of the receiver                         |
 | deposit.token                                   | Token to be transferred (symbol or address of the supported token) |
 | deposit.amount                                  | Amount of token to be transferred                                  |
-| deposit.ethTxOptions                            | Arguments for the deposit rootstock transaction, e.g. gas price.    |
+| deposit.ethTxOptions                            | Arguments for the deposit Rootstock transaction, e.g. gas price.   |
 | deposit.approveDepositAmountForERC20 (optional) | See below\*                                                        |
 | returns                                         | Handle for this transaction.                                       |
 
@@ -411,7 +411,7 @@ const syncWallet = ..; // Setup RIF Rollup wallet from ethers.Signer.
 
 const depositPriorityOperation = await syncWallet.depositToSyncFromRootstock({
   depositTo: "0x2d5bf7a3ab29f0ff424d738a83f9b0588bc9241e",
-  token: "ETH",
+  token: "RBTC",
   amount: ethers.utils.parseEther("1.0"),
 });
 
@@ -422,13 +422,13 @@ const priorityOpReceipt = await depositPriorityOperation.awaitReceipt();
 ### Changing account public key
 
 In order to send RIF Rollup transactions (transfer and withdraw) user has to associate RIF Rollup key pair with account. Every
-RIF Rollup account has address which is rootstock address of the owner.
+RIF Rollup account has address which is Rootstock address of the owner.
 
 There are two ways to authorize RIF Rollup key pair.
 
-1. Using rootstock signature of specific message. This way is preferred but can only be used if your rootstock wallet can
+1. Using Rootstock signature of specific message. This way is preferred but can only be used if your Rootstock wallet can
    sign messages.
-2. Using rootstock transaction to RIF Rollup smart-contract.
+2. Using Rootstock transaction to RIF Rollup smart-contract.
 
 <aside class = notice>
 The account should be present in the RIF Rollup network in order to set a signing key for it.
@@ -458,7 +458,7 @@ async setSigningKey(changePubKey: {
 | Name                               | Description                                                                 |
 | ---------------------------------- | --------------------------------------------------------------------------- |
 | changePubKey.feeToken              | Token to pay fee in.[^token]                                                |
-| changePubKey.ethAuthType           | The type which determines how will the rootstock signature be verified.      |
+| changePubKey.ethAuthType           | The type which determines how will the Rootstock signature be verified.     |
 | changePubKey.fee (optional)        | Amount of token to be paid as a fee for this transaction.[^fee]             |
 | changePubKey.nonce (optional)      | Nonce that is going to be used for this transaction.[^nonce]                |
 | changePubKey.validFrom (optional)  | Unix timestamp from which the block with this transaction can be processed  |
@@ -509,14 +509,14 @@ async signSetSigningKey(changePubKey: {
 | changePubKey.feeToken              | Token to pay fee in.[^token]                                                |
 | changePubKey.fee                   | Amount of token to be paid as a fee for this transaction.[^fee]             |
 | changePubKey.nonce                 | Nonce that is going to be used for this transaction.[^nonce]                |
-| changePubKey.ethAuthType           | The type which determines how will the rootstock signature be verified.      | 
+| changePubKey.ethAuthType           | The type which determines how will the Rootstock signature be verified.     | 
 | changePubKey.validFrom (optional)  | Unix timestamp from which the block with this transaction can be processed  |
 | changePubKey.validUntil (optional) | Unix timestamp until which the block with this transaction can be processed | 
 | returns                            | Signed transaction                                                          |
 
-### Authorize new public key using rootstock transaction
+### Authorize new public key using Rootstock transaction
 
-This method is used to authorize [public key change](#changing-account-public-key) using rootstock transaction for
+This method is used to authorize [public key change](#changing-account-public-key) using Rootstock transaction for
 wallets that don't support message signing.
 
 > Signature
@@ -533,7 +533,7 @@ async onchainAuthSigningKey(
 | Name                    | Description                                                                    |
 | ----------------------- | ------------------------------------------------------------------------------ |
 | nonce                   | Nonce that is going to be used for `setSigningKey` transaction.[^nonce]        |
-| ethTxOptions (optional) | Arguments for the onchain authentication rootstock transaction, e.g. gas price. |
+| ethTxOptions (optional) | Arguments for the onchain authentication Rootstock transaction, e.g. gas price.|
 | returns                 | Handle of the submitted transaction                                            |
 
 > Example
@@ -549,7 +549,7 @@ if (!await wallet.isSigningKeySet()) {
   await onchainAuthTransaction.wait();
 
   const changePubkey = await wallet.setSigningKey({
-    feeToken: "ETH",
+    feeToken: "RBTC",
     ethAuthType: "ECDSA"
   });
 
@@ -612,7 +612,7 @@ async syncTransfer(transfer:{
 
 | Name                           | Description                                                                 |
 | ------------------------------ | --------------------------------------------------------------------------- |
-| transfer.to                    | RIF Rollup address of the recipient of funds                                    |
+| transfer.to                    | RIF Rollup address of the recipient of funds                                |
 | transfer.token                 | Token to be transferred[^token]                                             |
 | transfer.amount                | Amount of token to be transferred.[^amount]                                 |
 | transfer.fee (optional)        | Amount of token to be paid as a fee for this transaction.[^fee]             |
@@ -662,7 +662,7 @@ async signSyncTransfer(transfer: {
 
 | Name                           | Description                                                                 |
 | ------------------------------ | --------------------------------------------------------------------------- |
-| transfer.to                    | RIF Rollup address of the recipient of funds                                    |
+| transfer.to                    | RIF Rollup address of the recipient of funds                                |
 | transfer.token                 | Token to be transferred.[^token]                                            |
 | transfer.amount                | Amount of token to be transferred.[^amount]                                 |
 | transfer.fee                   | Amount of token to be paid as a fee for this transaction.[^fee]             |
@@ -866,7 +866,7 @@ const transferTransactions = await wallet.syncMultiTransfer([transferA, transfer
 
 ### Withdraw token from the RIF Rollup
 
-Moves funds from the RIF Rollup account to rootstock address. Sender account should have correct public key set before
+Moves funds from the RIF Rollup account to Rootstock address. Sender account should have correct public key set before
 sending this transaction. ( see [change pub key](#changing-account-public-key))
 
 Before sending this transaction, the user will be asked to sign a specific message with transaction details using their
@@ -874,8 +874,8 @@ Ethereum account (because of the security reasons).
 
 The operators require a fee to be paid in order to process transactions.[^fee]
 
-The transaction has to be verified until funds are available on the rootstock wallet balance so it is useful to use
-`awaitVerifyReceipt`(see [utils]) before checking rootstock balance.
+The transaction has to be verified until funds are available on the Rootstock wallet balance so it is useful to use
+`awaitVerifyReceipt`(see [utils]) before checking Rootstock balance.
 
 > Signature
 
@@ -896,7 +896,7 @@ async withdrawFromSyncToRootstock(withdraw: {
 
 | Name                               | Description                                                                               |
 | ---------------------------------- | ----------------------------------------------------------------------------------------- |
-| withdraw.ethAddress                | rootstock address of the recipient                                                         |
+| withdraw.ethAddress                | Rootstock address of the recipient                                                        |
 | withdraw.token                     | Token to be transferred[^token].                                                          |
 | withdraw.amount                    | Amount of token to be transferred[^amount].                                               |
 | withdraw.fee (optional)            | amount of token to be paid as a fee for this transaction[^fee].                           |
@@ -947,7 +947,7 @@ async signWithdrawFromSyncToRootstock(withdraw: {
 
 | Name                           | Description                                                                 |
 | ------------------------------ | --------------------------------------------------------------------------- |
-| withdraw.ethAddress            | rootstock address of the recipient                                           |
+| withdraw.ethAddress            | Rootstock address of the recipient                                          |
 | withdraw.token                 | Token to be transferred[^token].                                            |
 | withdraw.amount                | Amount of token to be transferred[^amount].                                 |
 | withdraw.fee                   | amount of token to be paid as a fee for this transaction[^fee].             |
@@ -960,7 +960,7 @@ async signWithdrawFromSyncToRootstock(withdraw: {
 
 Initialize a forced withdraw of funds for an unowned account. Target account must not have a signing key set and must
 exist more than 24 hours. After execution of the transaction, funds will be transferred from the target RIF Rollup wallet to
-the corresponding rootstock wallet. Transaction initiator pays fee for this transaction. All the balance of requested
+the corresponding Rootstock wallet. Transaction initiator pays fee for this transaction. All the balance of requested
 token will be transferred.
 
 Sender account should have correct public key set before sending this transaction. (see
@@ -970,8 +970,8 @@ The operators require a fee to be paid in order to process transactions[^fee].
 
 **Note:** fee is paid by the transaction initiator, not by the target account.
 
-The transaction has to be verified until funds are available on the rootstock wallet balance so it is useful to use
-`awaitVerifyReceipt`(see [utils]) before checking rootstock balance.
+The transaction has to be verified until funds are available on the Rootstock wallet balance so it is useful to use
+`awaitVerifyReceipt`(see [utils]) before checking Rootstock balance.
 
 > Signature
 
@@ -990,7 +990,7 @@ async syncForcedExit(forcedExit: {
 
 | Name                             | Description                                                                 |
 | -------------------------------- | --------------------------------------------------------------------------- |
-| forcedExit.target                | rootstock address of the target account.                                     |
+| forcedExit.target                | Rootstock address of the target account.                                    |
 | forcedExit.token                 | Token to be transferred[^token].                                            |
 | forcedExit.fee (optional)        | Amount of token to be paid as a fee for this transaction[^fee].             |
 | forcedExit.nonce (optional)      | Nonce that is going to be used for this transaction[^nonce].                |
@@ -1035,7 +1035,7 @@ async signSyncForcedExit(forcedExit: {
 
 | Name              | Description                                                     |
 | ----------------- | --------------------------------------------------------------- |
-| forcedExit.target | RIF Rollup address of the target account                            |
+| forcedExit.target | RIF Rollup address of the target account                        |
 | forcedExit.token  | Token to be transferred[^token].                                |
 | forcedExit.fee    | Amount of token to be paid as a fee for this transaction[^fee]. |
 | forcedExit.nonce  | Nonce that is going to be used for this transaction[^nonce].    |
@@ -1044,17 +1044,17 @@ async signSyncForcedExit(forcedExit: {
 ### Emergency withdraw from Sync
 
 If ordinary withdraw from RIF Rollup account is ignored by network operators user could create an emergency withdraw request
-using special rootstock transaction, this withdraw request can't be ignored.
+using special Rootstock transaction, this withdraw request can't be ignored.
 
-Moves the full amount of the given token from the RIF Rollup account to the rootstock account.
+Moves the full amount of the given token from the RIF Rollup account to the Rootstock account.
 
-Once the operation is committed to the rootstock network, we have to wait for a certain amount of confirmations (see
+Once the operation is committed to the Rootstock network, we have to wait for a certain amount of confirmations (see
 [provider docs](../providers/#get-amount-of-confirmations-required-for-priority-operations) for exact number) before
 accepting it in the RIF Rollup network. Operation will be processed within the RIF Rollup network as soon as the required amount
 of confirmations is reached.
 
-The transaction has to be verified until funds are available on the rootstock wallet balance so it is useful to use
-`awaitVerifyReceipt`(see [utils]) before checking rootstock balance.
+The transaction has to be verified until funds are available on the Rootstock wallet balance so it is useful to use
+`awaitVerifyReceipt`(see [utils]) before checking Rootstock balance.
 
 > Signature
 
@@ -1072,7 +1072,7 @@ async emergencyWithdraw(withdraw: {
 | -------------------------------- | ---------------------------------------------------------------------- |
 | withdraw.token                   | Token to be withdrawn[^token].                                         |
 | withdraw.accountId (optional)    | Numerical id of the given account[^acc_id].                            |
-| withdraw.ethTxOptions (optional) | arguments for emergency withdraw rootstock transaction, e.g. gas price. |
+| withdraw.ethTxOptions (optional) | arguments for emergency withdraw Rootstock transaction, e.g. gas price.|
 | returns                          | Handle for this transaction.                                           |
 
 > Example
@@ -1084,7 +1084,7 @@ import { ethers } from "ethers";
 const syncWallet = ..; // Setup RIF Rollup wallet.
 
 const emergencyWithdrawPriorityOp = await syncWallet.emergencyWithdraw({
-  token: "ETH",
+  token: "RBTC",
 });
 
 // Wait till priority operation is verified.
@@ -1125,7 +1125,7 @@ async withdrawPendingBalance(
 
 | Name              | Description                             |
 | ----------------- | --------------------------------------- |
-| from              | rootstock address of the target account. |
+| from              | Rootstock address of the target account.|
 | token             | Token to be withdrawn[^token]           |
 | amount (optional) | Amount to withdraw[^amount]             |
 | returns           | Handle for this transaction.            |
@@ -1140,7 +1140,7 @@ const syncWallet = ..; // Setup RIF Rollup wallet.
 
 const withdrawPendingTx = await syncWallet.withdrawPendingBalance(
   "0x9de880ac69f3ed1e4d6870fcdabf07cbbed6f85c",
-  "ETH",
+  "RBTC",
   ethers.utils.parseEther("0.001")
 );
 
@@ -1170,13 +1170,14 @@ async withdrawPendingBalances(
 
 #### Inputs and outputs
 
-| Name               | Description                                                                                                                              |
-| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| from               | rootstock addresses of the target account.                                                                                                |
-| tokens             | Tokens to be withdrawn[^token]                                                                                                           |
-| multicallParams    | The params of the call to the multicall smart contract. This is an advanced feature, it is not recommended to set these values manually. |
-| amounts (optional) | Amounts to withdraw                                                                                                                      |
-| returns            | Handle for this transaction.                                                                                                             |
+| Name               | Description                                                                                   |
+| ------------------ | --------------------------------------------------------------------------------------------- |
+| from               | Rootstock addresses of the target account.                                                    |
+| tokens             | Tokens to be withdrawn[^token]                                                                |
+| multicallParams    | The params of the call to the multicall smart contract. This is an advanced feature and it    |
+|                    | is not recommended to set these values manually.                                              |
+| amounts (optional) | Amounts to withdraw                                                                           |
+| returns            | Handle for this transaction.                                                                  |
 
 > Example
 
@@ -1188,7 +1189,7 @@ const syncWallet = ..; // Setup RIF Rollup wallet.
 
 const withdrawPendingTx = await syncWallet.withdrawPendingBalances(
   ["0x9de880ac69f3ed1e4d6870fcdabf07cbbed6f85c", "0x2D9835a1C1662559975B00AEA00e326D1F9f13d0"],
-  ["ETH", "DAI"],
+  ["RBTC", "RIF"],
   {},
   [ethers.utils.parseEther("0.001"), ethers.utils.parseEther("0.002")]
 );
@@ -1260,7 +1261,7 @@ addWithdraw(withdraw: {
 
 | Name                               | Description                                                                               |
 | ---------------------------------- | ----------------------------------------------------------------------------------------- |
-| withdraw.ethAddress                | rootstock address of the target.                                                           |
+| withdraw.ethAddress                | Rootstock address of the target.                                                          |
 | withdraw.token                     | Token to be withdrawn[^token]                                                             |
 | withdraw.amount                    | Amount to withdraw[^amount]                                                               |
 | withdraw.fee (optional)            | Amount of token to be paid as a fee for this transaction[^fee]                            |
@@ -1279,7 +1280,7 @@ const batchBuilder = ..; // Setup batch builder.
 
 batchBuilder.addWithdraw({
   ethAddress: syncWallet.address(),
-  token: "ETH",
+  token: "RBTC",
   amount: ethers.utils.parseEther("0.001")
 });
 ```
@@ -1305,7 +1306,7 @@ addTransfer(transfer: {
 
 | Name                           | Description                                                                 |
 | ------------------------------ | --------------------------------------------------------------------------- |
-| transfer.to                    | RIF Rollup address of the recipient of funds.                                   |
+| transfer.to                    | RIF Rollup address of the recipient of funds.                               |
 | transfer.token                 | Token to be transferred[^token]                                             |
 | transfer.amount                | Amount of token to be transferred.[^amount]                                 |
 | transfer.fee (optional)        | Amount of token to be paid as a fee for this transaction.[^fee]             |
@@ -1322,7 +1323,7 @@ const batchBuilder = ..; // Setup batch builder.
 
 batchBuilder.addTransfer({
   to: "0x2D9835a1C1662559975B00AEA00e326D1F9f13d0",
-  token: "ETH",
+  token: "RBTC",
   amount: ethers.utils.parseEther("0.001")
 });
 ```
@@ -1351,7 +1352,7 @@ addChangePubKey(changePubKey:
 | Name                               | Description                                                                 |
 | ---------------------------------- | --------------------------------------------------------------------------- |
 | changePubKey.feeToken              | Token to pay fee in.[^token]                                                |
-| changePubKey.ethAuthType           | The type which determines how will the rootstock signature be verified.      |
+| changePubKey.ethAuthType           | The type which determines how will the Rootstock signature be verified.     |
 | changePubKey.fee (optional)        | Amount of token to be paid as a fee for this transaction.[^fee]             |
 | changePubKey.validFrom (optional)  | Unix timestamp from which the block with this transaction can be processed  |
 | changePubKey.validUntil (optional) | Unix timestamp until which the block with this transaction can be processed |
@@ -1363,7 +1364,7 @@ addChangePubKey(changePubKey:
 const batchBuilder = ..; // Setup batch builder.
 
 batchBuilder.addChangePubKey({
-  feeToken: "ETH",
+  feeToken: "RBTC",
   ethAuthType: 'ECDSA'
 });
 ```
@@ -1388,7 +1389,7 @@ addForcedExit(forcedExit: {
 
 | Name                             | Description                                                                 |
 | -------------------------------- | --------------------------------------------------------------------------- |
-| forcedExit.target                | RIF Rollup address of the target account                                        |
+| forcedExit.target                | RIF Rollup address of the target account                                    |
 | forcedExit.token                 | Token to be withdrawn[^token]                                               |
 | forcedExit.fee (optional)        | Amount of token to be paid as a fee for this transaction.[^fee]             |
 | forcedExit.validFrom (optional)  | Unix timestamp from which the block with this transaction can be processed  |
@@ -1405,7 +1406,7 @@ const batchBuilder = ..; // Setup batch builder.
 
 batchBuilder.addForcedExit({
   target: syncWallet.address(),
-  token: "ETH"
+  token: "RBTC"
 });
 ```
 
@@ -1428,7 +1429,7 @@ build(
 | Name                | Description                                  |
 | ------------------- | -------------------------------------------- |
 | feeToken (optional) | Token to pay fee for in.[^token]             |
-| returns             | Transactions, rootstock signature, total fee. |
+| returns             | Transactions, Rootstock signature, total fee.|
 
 > Example
 
@@ -1440,14 +1441,14 @@ const batchBuilder = ..; // Setup batch builder.
 
 batchBuilder.addForcedExit({
   target: syncWallet.address(),
-  token: "ETH"
+  token: "RBTC"
 });
 batchBuilder.addTransfer({
   to: "0x2D9835a1C1662559975B00AEA00e326D1F9f13d0",
-  token: "ETH",
+  token: "RBTC",
   amount: ethers.utils.parseEther("0.001")
 });
-await batchBuilder.build("ETH");
+await batchBuilder.build("RBTC");
 ```
 
 ## Signer
@@ -1475,7 +1476,7 @@ static fromPrivateKey(pk: Uint8Array): Signer;
 static async fromSeed(seed: Uint8Array): Promise<Signer>;
 ```
 
-### Create from rootstock signature
+### Create from Rootstock signature
 
 > Signature
 
@@ -1492,7 +1493,7 @@ static async fromETHSignature(
 
 | Name      | Description                                                                  |
 | --------- | ---------------------------------------------------------------------------- |
-| ethSigner | rootstock signer that is going to be used for signature generation.           |
+| ethSigner | Rootstock signer that is going to be used for signature generation.          |
 | returns   | `Signer` derived from this seed and method that signer used to sign message. |
 
 ### Get public key hash
@@ -1538,7 +1539,7 @@ async signSyncTransfer(transfer: {
 | transfer.amount    | Amount to transfer, payed in token      |
 | transfer.fee       | Fee to pay for transfer, payed in token |
 | transfer.nonce     | Transaction nonce                       |
-| returns            | Signed RIF Rollup transfer transaction      |
+| returns            | Signed RIF Rollup transfer transaction  |
 
 ### Sign RIF Rollup Withdraw
 
@@ -1564,12 +1565,12 @@ async signSyncWithdraw(withdraw: {
 | ------------------- | ----------------------------------------- |
 | withdraw.accountId  | Account id of the sender                  |
 | withdraw.from       | Account address of the sender             |
-| withdraw.ethAddress | rootstock address of the recipient         |
+| withdraw.ethAddress | Rootstock address of the recipient        |
 | withdraw.tokenId    | Numerical token id                        |
 | withdraw.amount     | Amount to withdraw, paid in token         |
 | withdraw.fee        | Fee to pay for withdrawing, paid in token |
 | withdraw.nonce      | Transaction nonce                         |
-| returns             | Signed RIF Rollup withdraw transaction        |
+| returns             | Signed RIF Rollup withdraw transaction    |
 
 ### Sign RIF Rollup Forced Exit
 
@@ -1592,11 +1593,11 @@ async signSyncForcedExit(forcedExit: {
 | Name                          | Description                               |
 | ----------------------------- | ----------------------------------------- |
 | forcedExit.initiatorAccountId | Account id of the sender                  |
-| forcedExit.target             | rootstock address of the target account    |
+| forcedExit.target             | Rootstock address of the target account   |
 | forcedExit.tokenId            | Numerical token id                        |
 | forcedExit.fee                | Fee to pay for withdrawing, paid in token |
 | forcedExit.nonce              | Transaction nonce                         |
-| returns                       | Signed RIF Rollup forced exit transaction     |
+| returns                       | Signed RIF Rollup forced exit transaction |
 
 ### Sign RIF Rollup ChangePubKey
 
@@ -1624,13 +1625,13 @@ async signSyncChangePubKey(changePubKey: {
 | Name                                 | Description                                                                 |
 | ------------------------------------ | --------------------------------------------------------------------------- |
 | changePubKey.accountId               | Account id of the sender                                                    |
-| changePubKey.account                 | RIF Rollup address of the account                                               |
+| changePubKey.account                 | RIF Rollup address of the account                                           |
 | changePubKey.newPkHash               | Public key hash to be set for an account                                    |
 | changePubKey.feeTokenId              | Numerical token id                                                          |
 | changePubKey.fee                     | Fee to pay for operation, paid in token                                     |
 | changePubKey.nonce                   | Transaction nonce                                                           |
 | changePubKey.validFrom               | Unix timestamp from which the block with this transaction can be processed  |
 | changePubKey.validUntil              | Unix timestamp until which the block with this transaction can be processed |
-| changePubKey.ethAuthData (optional)  | Data which is used to verify the rootstock signature                         |
+| changePubKey.ethAuthData (optional)  | Data which is used to verify the Rootstock signature                        |
 | changePubKey.ethSignature (optional) |                                                                             |
-| returns                              | Signed RIF Rollup change public key transaction                                 |
+| returns                              | Signed RIF Rollup change public key transaction                             |

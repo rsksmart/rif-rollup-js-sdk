@@ -25,7 +25,7 @@ begin with our [NFT tutorial](/dev/nfts) and come back here to reference specifi
 The NFTs are also supported on `mainnet` and `testnet` networks. For this tutorial, we will use testnet.
 
 ```typescript
-const syncProvider = await rifRollup.getDefaultProvider('testnet');
+const syncProvider = await rifRollup.getDefaultProvider(network);
 ```
 
 ## Mint NFT

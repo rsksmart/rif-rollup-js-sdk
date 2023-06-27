@@ -24,12 +24,16 @@ Websocket support will be removed soon due to its instability.
 ```typescript
 import * as rifRollup from 'rif-rollup-js-sdk';
 
-const syncHttpProvider = await rifRollup.getDefaultProvider('testnet');
+const syncHttpProvider = await rifRollup.getDefaultProvider(network);
+```
+
+where
+
+```typescript
+network = 'localhost' | 'testnet' | 'mainnet';
 ```
 
 Used to connect to the common endpoint for the given network over HTTP transport.
-
-Supported networks are: "testnet", "mainnet", and "localhost".
 
 ### Create WebSocket provider (it is deprecated and will be removed soon)
 
@@ -68,8 +72,8 @@ async submitTx(tx: any, signature?: TxEthSignature, fastProcessing?: boolean): P
 
 | Name           | Description                                                                           |
 | -------------- | ------------------------------------------------------------------------------------- |
-| tx             | Signed RIF Rollup transaction (see types, for detailed description)                       |
-| signature      | Signature of the readable representation of the transaction signed by rootstock wallet |
+| tx             | Signed RIF Rollup transaction (see types, for detailed description)                   |
+| signature      | Signature of the readable representation of the transaction signed by rootstock wallet|
 | fastProcessing | For withdrawals only: request faster processing of transaction                        |
 | returns        | `0x`-prefixed hex-encoded hash of the transaction                                     |
 
@@ -78,7 +82,7 @@ async submitTx(tx: any, signature?: TxEthSignature, fastProcessing?: boolean): P
 ```typescript
 import * as rifRollup from 'rif-rollup-js-sdk';
 
-const syncHttpProvider = await rifRollup.getDefaultProvider('testnet');
+const syncHttpProvider = await rifRollup.getDefaultProvider(network);
 const signedTransferTx = {
   accountId: 13, // id of the sender account in the RIF Rollup
   type: 'Transfer',
@@ -126,7 +130,7 @@ async submitTxsBatch(
 | Name                     | Description                                                                    |
 | ------------------------ | ------------------------------------------------------------------------------ |
 | transactions             | An array of transactions / signature pairs.                                    |
-| signatures (optional) | Either a single or a list of signatures that sign the entire batch             |
+| signatures (optional)    | Either a single or a list of signatures that sign the entire batch             |
 | returns                  | An array of `0x`-prefixed hex-encoded hashes for each transaction in the batch |
 
 For details on individual transactions, see [Submit transaction](#submit-transaction).
@@ -136,7 +140,7 @@ For details on individual transactions, see [Submit transaction](#submit-transac
 ```typescript
 import * as rifRollup from 'rif-rollup-js-sdk';
 
-const syncHttpProvider = await rifRollup.getDefaultProvider('testnet');
+const syncHttpProvider = await rifRollup.getDefaultProvider(network);
 const firstTransferTx = {
   accountId: 13, // id of the sender account in the RIF Rollup
   type: 'Transfer',
@@ -178,16 +182,16 @@ async getContractAddress(): Promise<ContractAddress>;
 
 #### Inputs and outputs
 
-| Name    | Description                                                                           |
-| ------- | ------------------------------------------------------------------------------------- |
-| returns | Addresses of the RIF Rollup network smart contracts (see types, for detailed description) |
+| Name    | Description                                                                              |
+| ------- | ---------------------------------------------------------------------------------------- |
+| returns | Addresses of the RIF Rollup network smart contracts (see types, for detailed description)|
 
 > Example
 
 ```typescript
 import * as rifRollup from 'rif-rollup-js-sdk';
 
-const syncHttpProvider = await rifRollup.getDefaultProvider('testnet');
+const syncHttpProvider = await rifRollup.getDefaultProvider(network);
 
 const contractAddresses = await syncHttpProvider.getContractAddress();
 ```
@@ -220,7 +224,7 @@ async getTokens(): Promise<Tokens>;
 ```typescript
 import * as rifRollup from 'rif-rollup-js-sdk';
 
-const syncHttpProvider = await rifRollup.getDefaultProvider('testnet');
+const syncHttpProvider = await rifRollup.getDefaultProvider(network);
 
 const contractAddresses = await syncHttpProvider.getTokens();
 ```
@@ -252,8 +256,8 @@ async getState(address: Address): Promise<AccountState>;
 
 #### Inputs and outputs
 
-| Name    | Description                                                                                            |
-| ------- | ------------------------------------------------------------------------------------------------------ |
+| Name    | Description                                                                                                |
+| ------- | ---------------------------------------------------------------------------------------------------------- |
 | address | `0x`-prefixed hex-encoded address of the RIF Rollup account.                                               |
 | returns | Detailed state of the RIF Rollup account, including balances, nonce. (see types, for detailed description) |
 
@@ -300,8 +304,8 @@ async getConfirmationsForEthOpAmount(): Promise<number>;
 
 #### Inputs and outputs
 
-| Name    | Description                                                                                |
-| ------- | ------------------------------------------------------------------------------------------ |
+| Name    | Description                                                                                    |
+| ------- | ---------------------------------------------------------------------------------------------- |
 | returns | Amount of confirmations required for priority operations to be processed by RIF Rollup network |
 
 > Example
@@ -309,7 +313,7 @@ async getConfirmationsForEthOpAmount(): Promise<number>;
 ```typescript
 import * as rifRollup from 'rif-rollup-js-sdk';
 
-const syncHttpProvider = await rifRollup.getDefaultProvider('testnet');
+const syncHttpProvider = await rifRollup.getDefaultProvider(network);
 const requiredConfirmationsAmount = await syncHttpProvider.getConfirmationsForEthOpAmount();
 ```
 
@@ -323,10 +327,10 @@ async getTxReceipt(txHash: string): Promise<TransactionReceipt>;
 
 #### Inputs and outputs
 
-| Name    | Description                                                       |
-| ------- | ----------------------------------------------------------------- |
-| txHash  | `sync-tx:`-prefixed hex-encoded hash of the RIF Rollup transaction.   |
-| returns | Receipt of this transaction (see types, for detailed description) |
+| Name    | Description                                                         |
+| ------- | ------------------------------------------------------------------- |
+| txHash  | `sync-tx:`-prefixed hex-encoded hash of the RIF Rollup transaction. |
+| returns | Receipt of this transaction (see types, for detailed description)   |
 
 > Returns
 
@@ -378,18 +382,18 @@ async notifyTransaction(
 
 <!-- markdownlint-disable MD013 -->
 
-| Name    | Description                                                       |
-| ------- | ----------------------------------------------------------------- |
-| txHash  | `sync-tx:`-prefixed hex-encoded hash of the RIF Rollup transaction.   |
-| action  | "COMMIT" or "VERIFY"                                              |
-| returns | Receipt of this transaction (see types, for detailed description) |
+| Name    | Description                                                         |
+| ------- | ------------------------------------------------------------------- |
+| txHash  | `sync-tx:`-prefixed hex-encoded hash of the RIF Rollup transaction. |
+| action  | "COMMIT" or "VERIFY"                                                |
+| returns | Receipt of this transaction (see types, for detailed description)   |
 
 > Example
 
 ```typescript
 import * as rifRollup from 'rif-rollup-js-sdk';
 
-const syncHttpProvider = await rifRollup.getDefaultProvider('testnet');
+const syncHttpProvider = await rifRollup.getDefaultProvider(network);
 
 const receipt = await syncHttpProvider.notifyTransaction(
   'sync-tx:1111111111111111111111111111111111111111111111111111111111111111',
@@ -460,7 +464,7 @@ deposit).
 ```typescript
 import * as rifRollup from 'rif-rollup-js-sdk';
 
-const syncHttpProvider = await rifRollup.getDefaultProvider('testnet');
+const syncHttpProvider = await rifRollup.getDefaultProvider(network);
 
 const receipt = await syncHttpProvider.notifyPriorityOp(
   178, // priority op id
@@ -563,7 +567,7 @@ async getTokenPrice(
 ```typescript
 import * as rifRollup from 'rif-rollup-js-sdk';
 
-const syncHttpProvider = await rifRollup.getDefaultProvider('testnet');
+const syncHttpProvider = await rifRollup.getDefaultProvider(network);
 const rbtcPrice = await syncHttpProvider.getTokenPrice('RBTC');
 
 console.log(`Current Rootstock price is ${rbtcPrice} USD`);
@@ -586,10 +590,10 @@ constructor(
 
 #### Inputs and outputs
 
-| Name            | Description                                     |
-| --------------- | ----------------------------------------------- |
-| ethersProvider  | `ethers.js` provider connected to rootstock node |
-| contractAddress | Addresses of the RIF Rollup network contracts       |
+| Name            | Description                                      |
+| --------------- | ------------------------------------------------ |
+| ethersProvider  | `ethers.js` provider connected to Rootstock node |
+| contractAddress | Addresses of the RIF Rollup network contracts    |
 
 > Example
 
@@ -597,8 +601,8 @@ constructor(
 import * as rifRollup from 'rif-rollup-js-sdk';
 import { ethers } from 'ethers';
 
-const ethersProvider = ethers.getDefaultProvider('testnet');
-const syncHttpProvider = await rifRollup.getDefaultProvider('testnet');
+const ethersProvider = ethers.getDefaultProvider(network);
+const syncHttpProvider = await rifRollup.getDefaultProvider(network);
 
 const rbtcProxy = new rifRollup.RBTCProxy(ethersProvider, syncHttpProvider.contractAddress);
 ```
@@ -616,9 +620,9 @@ async resolveTokenId(token: TokenAddress): Promise<number>;
 
 #### Inputs and outputs
 
-| Name    | Description                                                    |
-| ------- | -------------------------------------------------------------- |
-| token   | Rootstock token address (ERC20 contract address)                |
+| Name    | Description                                                        |
+| ------- | ------------------------------------------------------------------ |
+| token   | Rootstock token address (ERC20 contract address)                   |
 | returns | Numerical identifier of the given token inside RIF Rollup network. |
 
 > Example
@@ -627,8 +631,8 @@ async resolveTokenId(token: TokenAddress): Promise<number>;
 import * as rifRollup from 'rif-rollup-js-sdk';
 import { ethers } from 'ethers';
 
-const ethersProvider = ethers.getDefaultProvider('testnet');
-const syncProvider = await rifRollup.getDefaultProvider('testnet');
+const ethersProvider = ethers.getDefaultProvider(network);
+const syncProvider = await rifRollup.getDefaultProvider(network);
 const rbtcProxy = new rifRollup.RBTCProxy(ethersProvider, syncProvider.contractAddress);
 
 const rbtcId = await rbtcProxy.resolveTokenId('0x0000000000000000000000000000000000000000'); // RBTC token address is 0x0..0

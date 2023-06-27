@@ -3,16 +3,16 @@
 ## Tokens and common types
 
 ```typescript
-// Symbol like "ETH" or "FAU" or token contract address(zero address is implied for "ETH").
+// Symbol like "RBTC" or "RIF" or token contract address(zero address is implied for "RBTC").
 export type TokenLike = TokenSymbol | TokenAddress;
-// Token symbol (e.g. "ETH", "FAU", etc.)
+// Token symbol (e.g. "RBTC", "RIF", etc.)
 export type TokenSymbol = string;
-// Token address (e.g. 0xde..ad for ERC20, or 0x00.00 for "ETH")
+// Token address (e.g. 0xde..ad for ERC20, or 0x00.00 for "RBTC")
 export type TokenAddress = string;
 
 // List of all available tokens
 export interface Tokens {
-  // Tokens are indexed by their symbol (e.g. "ETH")
+  // Tokens are indexed by their symbol (e.g. "RBTC")
   [token: string]: {
     address: string;
     id: number;
@@ -27,7 +27,7 @@ export interface ContractAddress {
   govContract: string;
 }
 
-// 0x-prefixed, hex encoded, rootstock account address
+// 0x-prefixed, hex encoded, Rootstock account address
 export type Address = string;
 
 // Committed nonce is going to be resolved to last nonce known to the RIF Rollup network
@@ -36,7 +36,7 @@ export type Nonce = number | 'committed';
 // Denotes how authorization of operation is performed:
 // 'Onchain' if it's done by sending an Rootstock transaction,
 // 'ECDSA' if it's done by providing an Rootstock signature in RIF Rollup transaction.
-// 'CREATE2' if it's done by providing arguments to restore account rootstock address according to CREATE2 specification.
+// 'CREATE2' if it's done by providing arguments to restore account Rootstock address according to CREATE2 specification.
 // 'ECDSALegacyMessage' if it's done by providing an Rootstock signature in RIF Rollup transaction. Unlike the 'ECDSA', the user signs a human-readable message. Thus, the fee is ~30% higher than ECDSA.
 export type ChangePubkeyTypes = 'Onchain' | 'ECDSA' | 'CREATE2' | 'ECDSALegacyMessage';
 
@@ -103,7 +103,7 @@ export interface ChangePubKeyFee {
   // Denotes how authorization of operation is performed:
   // 'Onchain' if it's done by sending an Rootstock transaction,
   // 'ECDSA' if it's done by providing an Rootstock signature in RIF Rollup transaction.
-  // 'CREATE2' if it's done by providing arguments to restore account rootstock address according to CREATE2 specification.
+  // 'CREATE2' if it's done by providing arguments to restore account Rootstock address according to CREATE2 specification.
   ChangePubKey: ChangePubkeyTypes;
 }
 
@@ -128,7 +128,7 @@ export interface LegacyChangePubKeyFee {
 ```typescript
 import { utils } from 'ethers';
 
-// 0x-prefixed, hex encoded, rootstock account address
+// 0x-prefixed, hex encoded, Rootstock account address
 export type Address = string;
 // sync:-prefixed, hex encoded, hash of the account public key
 export type PubKeyHash = string;
@@ -141,7 +141,7 @@ export interface AccountState {
   // not yet processed by the RIF Rollup network.
   depositing: {
     balances: {
-      // Token are indexed by their symbol (e.g. "ETH")
+      // Token are indexed by their symbol (e.g. "RBTC")
       [token: string]: {
         // Sum of pending deposits for the token.
         amount: BigNumberish;
@@ -154,7 +154,7 @@ export interface AccountState {
   // Committed state is the last state known to the RIF Rollup network, can be ahead of verified state
   committed: {
     balances: {
-      // Token are indexed by their symbol (e.g. "ETH")
+      // Token are indexed by their symbol (e.g. "RBTC")
       [token: string]: BigNumberish;
     };
     // Nonce is equal to that of the next valid transaction.
@@ -165,7 +165,7 @@ export interface AccountState {
   // Verified state is proved with ZKP on the Rootstock network.
   verified: {
     balances: {
-      // Token are indexed by their symbol (e.g. "ETH")
+      // Token are indexed by their symbol (e.g. "RBTC")
       [token: string]: BigNumberish;
     };
     // Nonce is equal to that of the next valid transaction.
@@ -255,7 +255,7 @@ export interface ChangePubKey {
 
 export interface SignedTransaction {
   tx: Transfer | Withdraw | ChangePubKey | CloseAccount | ForcedExit;
-  rootstockSignature?: TxEthSignature;
+  RootstockSignature?: TxEthSignature;
 }
 
 export interface BlockInfo {

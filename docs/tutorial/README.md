@@ -3,9 +3,9 @@
 In this tutorial we will demonstrate how to:
 
 1. Connect to the RIF Rollup network.
-1. Deposit assets from Rootstock into RIF Rollup.
-1. Make transfers.
-1. Withdraw funds back to Rootstock mainnet.
+2. Deposit assets from Rootstock into RIF Rollup.
+3. Make transfers.
+4. Withdraw funds back to Rootstock mainnet.
 
 ## Adding dependencies
 
@@ -25,14 +25,14 @@ You can import all the content of the RIF Rollup library with the following stat
 import * as rifRollup from 'rif-rollup-js-sdk';
 ```
 
-Note, that it is not actually required to import all of the library. For instance, if you only need the Wallet class,
+Note that it is not actually required to import all of the library. For instance, if you only need the Wallet class,
 you can safely do
 
 ```typescript
 import { Wallet } from 'rif-rollup-js-sdk';
 ```
 
-But in the rest of the book we will assume that the library was imported the first way to differentiate content imported
+In the rest of the book we will assume that the library was imported the first way to differentiate content imported
 from the RIF Rollup and ethers libraries.
 
 ## Connecting to RIF Rollup network
@@ -40,14 +40,20 @@ from the RIF Rollup and ethers libraries.
 To interact with RIF Rollup network users need to know the endpoint of the operator node.
 
 ```typescript
-const syncProvider = await rifRollup.getDefaultProvider('testnet');
+const syncProvider = await rifRollup.getDefaultProvider(network);
+```
+
+where
+
+```typescript
+network = 'localhost' | 'testnet' | 'mainnet';
 ```
 
 Most operations require some read-only access to the Rootstock network. We use `ethers` library to interact with
 Rootstock.
 
 ```typescript
-const ethersProvider = ethers.getDefaultProvider('testnet');
+const ethersProvider = ethers.getDefaultProvider(network);
 ```
 
 ## Creating a Wallet
@@ -55,7 +61,7 @@ const ethersProvider = ethers.getDefaultProvider('testnet');
 To control your account in RIF Rollup, use the `rifRollup.Wallet` object. It can sign transactions with keys stored in
 `rifRollup.Signer` and send transaction to RIF Rollup network using `rifRollup.Provider`.
 
-`rifRollup.Wallet` is a wrapper around 2 objects:
+`rifRollup.Wallet` is a wrapper around two objects:
 
 - `ethers.Signer` to sign Rootstock transactions.
 - `rifRollup.Signer` to sign native RIF Rollup transactions.
