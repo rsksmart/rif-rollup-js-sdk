@@ -1,4 +1,4 @@
-# JavaScript SDK
+# JavaScript SDK for RIF Rollup
 
 This section contains documentation for the JavaScript SDK for RIF Rollup.
 
