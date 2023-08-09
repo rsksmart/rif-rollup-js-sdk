@@ -3,45 +3,33 @@ import { BigNumber } from 'ethers';
 import { SyncProvider } from './provider-interface';
 import * as types from './types';
 import { sleep, TokenSet } from './utils';
-import { Network } from './types';
+import { Network, RollupServerURLs } from './types';
 
 export async function getDefaultRestProvider(
     network: types.Network,
-    pollIntervalMilliSecs?: number
+    pollIntervalMilliSecs?: number,
+    rollupServerOverride?: RollupServerURLs
 ): Promise<RestProvider> {
     if (network === 'localhost') {
-        return await RestProvider.newProvider('https://127.0.0.1:3001/api/v0.2', pollIntervalMilliSecs, network);
+        return await RestProvider.newProvider(
+            rollupServerOverride?.[network] ?? 
+            'https://127.0.0.1:3001/api/v0.2', 
+            pollIntervalMilliSecs, 
+            network);
     } else if (network === 'testnet') {
         return await RestProvider.newProvider(
-            'https://dev.aggregation.rifcomputing.net:3029/api/v0.2',
+            rollupServerOverride?.[network] ?? 
+            'https://server-01.testnet.rollup.iovlabs.net:3001/api/v0.2/',
             pollIntervalMilliSecs,
             network
         );
     } else if (network === 'mainnet') {
-        return await RestProvider.newProvider(
-            'https://aggregation.rifcomputing.net:3029/api/v0.2',
+        return await RestProvider.newProvider(rollupServerOverride?.[network] ??
+            'https://server-01.testnet.rollup.iovlabs.net:3001/api/v0.2/',
             pollIntervalMilliSecs,
             network
         );
-    } else if (network === 'ropsten') {
-        return await RestProvider.newProvider('https://ropsten-api.zksync.io/api/v0.2', pollIntervalMilliSecs, network);
-    } else if (network === 'rinkeby') {
-        return await RestProvider.newProvider('https://rinkeby-api.zksync.io/api/v0.2', pollIntervalMilliSecs, network);
-    } else if (network === 'ropsten-beta') {
-        return await RestProvider.newProvider(
-            'https://ropsten-beta-api.zksync.io/api/v0.2',
-            pollIntervalMilliSecs,
-            network
-        );
-    } else if (network === 'rinkeby-beta') {
-        return await RestProvider.newProvider(
-            'https://rinkeby-beta-api.zksync.io/api/v0.2',
-            pollIntervalMilliSecs,
-            network
-        );
-    } else if (network === 'mainnet-zk') {
-        return await RestProvider.newProvider('https://api.zksync.io/api/v0.2', pollIntervalMilliSecs, network);
-    } else {
+    }  else {
         throw new Error(`Ethereum network ${network} is not supported`);
     }
 }

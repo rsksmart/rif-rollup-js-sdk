@@ -35,6 +35,8 @@ export function l1ChainId(network?: Network): number {
     throw new Error('Unsupported network');
 }
 
+export type RollupServerURLs = Record<Network, string>
+
 export interface Create2Data {
     creatorAddress: string;
     saltArg: string;
