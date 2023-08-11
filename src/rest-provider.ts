@@ -19,7 +19,7 @@ export async function getDefaultRestProvider(
     } else if (network === 'testnet') {
         return await RestProvider.newProvider(
             rollupServerOverride?.[network] ?? 
-            'https://server-01.testnet.rollup.iovlabs.net:3001/api/v0.2/',
+            'https://server.testnet.rollup.iovlabs.net/api/v0.2/',
             pollIntervalMilliSecs,
             network
         );
