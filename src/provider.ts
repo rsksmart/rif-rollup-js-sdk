@@ -44,14 +44,14 @@ export async function getDefaultProvider(
         if (transport === 'WS') {
             return await Provider.newWebsocketProvider('ws://127.0.0.1:3031', network);
         } else if (transport === 'HTTP') {
-            return await Provider.newHttpProvider( rollupServerOverride?.[network] ?? 'http://localhost:3001', pollIntervalMilliSecs, network);
+            return await Provider.newHttpProvider( rollupServerOverride?.[network] ?? 'http://localhost:3030', pollIntervalMilliSecs, network);
         }
     } else if (network === 'testnet') {
         if (transport === 'WS') {
-            return await Provider.newWebsocketProvider('wss://server.testnet.rollup.iovlabs.net');
+            return await Provider.newWebsocketProvider('wss://server.testnet.rollup.iovlabs.net:3031');
         } else if (transport === 'HTTP') {
             return await Provider.newHttpProvider(
-                rollupServerOverride?.[network] ??  'https://server.testnet.rollup.iovlabs.net',
+                rollupServerOverride?.[network] ??  'https://server.testnet.rollup.iovlabs.net:3030',
                 pollIntervalMilliSecs
             );
         }
