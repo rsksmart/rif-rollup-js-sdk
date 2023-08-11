@@ -1,6 +1,6 @@
 {
     "name": "@rsksmart/rif-rollup-js-sdk",
-    "version": "0.13.6-alpha",
+    "version": "0.13.7-alpha",
     "license": "MIT",
     "main": "build/index.js",
     "types": "build/index.d.ts",
