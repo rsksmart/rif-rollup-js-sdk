@@ -16,7 +16,8 @@ import {
     TxEthSignatureVariant,
     NFTInfo,
     Toggle2FARequest,
-    Toggle2FAResponse
+    Toggle2FAResponse,
+    RollupServerURLs
 } from './types';
 import { isTokenRBTC, sleep, TokenSet } from './utils';
 import {
@@ -33,7 +34,8 @@ import { SyncProvider } from './provider-interface';
 export async function getDefaultProvider(
     network: Network,
     transport: 'WS' | 'HTTP' = 'HTTP',
-    pollIntervalMilliSecs?: number
+    pollIntervalMilliSecs?: number,
+    rollupServerOverride?: RollupServerURLs
 ): Promise<Provider> {
     if (transport === 'WS') {
         console.warn('Websocket support will be removed in future. Use HTTP transport instead.');
@@ -42,14 +44,14 @@ export async function getDefaultProvider(
         if (transport === 'WS') {
             return await Provider.newWebsocketProvider('ws://127.0.0.1:3031', network);
         } else if (transport === 'HTTP') {
-            return await Provider.newHttpProvider('http://127.0.0.1:3030', pollIntervalMilliSecs, network);
+            return await Provider.newHttpProvider( rollupServerOverride?.[network] ?? 'http://localhost:3030', pollIntervalMilliSecs, network);
         }
     } else if (network === 'testnet') {
         if (transport === 'WS') {
-            return await Provider.newWebsocketProvider('wss://dev.aggregation.rifcomputing.net:3031');
+            return await Provider.newWebsocketProvider('wss://server.testnet.rollup.iovlabs.net:3031');
         } else if (transport === 'HTTP') {
             return await Provider.newHttpProvider(
-                'https://dev.aggregation.rifcomputing.net:3030',
+                rollupServerOverride?.[network] ??  'https://server.testnet.rollup.iovlabs.net:3030',
                 pollIntervalMilliSecs
             );
         }
@@ -57,39 +59,7 @@ export async function getDefaultProvider(
         if (transport === 'WS') {
             return await Provider.newWebsocketProvider('wss://aggregation.rifcomputing.net:3031');
         } else if (transport === 'HTTP') {
-            return await Provider.newHttpProvider('https://aggregation.rifcomputing.net:3030', pollIntervalMilliSecs);
-        }
-    } else if (network === 'goerli') {
-        if (transport === 'WS') {
-            return await Provider.newWebsocketProvider('wss://goerli-api.zksync.io/jsrpc-ws', network);
-        } else if (transport === 'HTTP') {
-            return await Provider.newHttpProvider('https://goerli-api.zksync.io/jsrpc', pollIntervalMilliSecs, network);
-        }
-    } else if (network === 'goerli-beta') {
-        if (transport === 'WS') {
-            return await Provider.newWebsocketProvider('wss://goerli-beta-api.zksync.dev/jsrpc-ws', network);
-        } else if (transport === 'HTTP') {
-            return await Provider.newHttpProvider(
-                'https://goerli-beta-api.zksync.dev/jsrpc',
-                pollIntervalMilliSecs,
-                network
-            );
-        }
-    } else if (network === 'rinkeby-beta') {
-        if (transport === 'WS') {
-            return await Provider.newWebsocketProvider('wss://rinkeby-beta-api.zksync.io/jsrpc-ws', network);
-        } else if (transport === 'HTTP') {
-            return await Provider.newHttpProvider(
-                'https://rinkeby-beta-api.zksync.io/jsrpc',
-                pollIntervalMilliSecs,
-                network
-            );
-        }
-    } else if (network === 'mainnet-zk') {
-        if (transport === 'WS') {
-            return await Provider.newWebsocketProvider('wss://api.zksync.io/jsrpc-ws', network);
-        } else if (transport === 'HTTP') {
-            return await Provider.newHttpProvider('https://api.zksync.io/jsrpc', pollIntervalMilliSecs, network);
+            return await Provider.newHttpProvider( rollupServerOverride?.[network] ?? 'https://aggregation.rifcomputing.net:3030', pollIntervalMilliSecs);  //not defined yet
         }
     } else {
         throw new Error(`Ethereum network ${network} is not supported`);
