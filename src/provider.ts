@@ -48,10 +48,10 @@ export async function getDefaultProvider(
         }
     } else if (network === 'testnet') {
         if (transport === 'WS') {
-            return await Provider.newWebsocketProvider('wss://server.testnet.rollup.iovlabs.net:3031');
+            return await Provider.newWebsocketProvider('https://jsonrpcws.server.testnet.rollup.rif.technology');
         } else if (transport === 'HTTP') {
             return await Provider.newHttpProvider(
-                rollupServerOverride?.[network] ??  'https://server.testnet.rollup.iovlabs.net:3030',
+                rollupServerOverride?.[network] ??  'https://jsonrpc.server.testnet.rollup.rif.technology',
                 pollIntervalMilliSecs
             );
         }
