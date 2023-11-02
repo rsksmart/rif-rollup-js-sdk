@@ -650,6 +650,15 @@ export abstract class AbstractWallet {
         token: TokenLike,
         erc20ApproveThreshold: BigNumber = ERC20_APPROVE_TRESHOLD
     ): Promise<boolean> {
+
+        // validates token
+        try {
+            this.provider.tokenSet.resolveTokenSymbol(token)
+        } catch (error) {
+            throw error;
+        }
+        
+
         if (isTokenRBTC(token)) {
             throw Error('RBTC token does not need approval.');
         }
