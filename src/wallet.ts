@@ -32,6 +32,7 @@ import {
 import { getChangePubkeyLegacyMessage, getChangePubkeyMessage, MAX_TIMESTAMP, isNFT } from './utils';
 import { Transaction, submitSignedTransaction } from './operations';
 import { AbstractWallet } from './abstract-wallet';
+import { Provider } from './provider';
 
 export { Transaction, RootstockOperation, submitSignedTransaction, submitSignedTransactionsBatch } from './operations';
 
@@ -64,6 +65,16 @@ export class Wallet extends AbstractWallet {
             ethSignerType = ethSignerType || signerResult.ethSignatureType;
         } else if (ethSignerType == null) {
             throw new Error('If you passed signer, you must also pass ethSignerType.');
+        }
+
+        // Validate that ethWallet is valid Ethereum signer
+        if (!(ethWallet instanceof ethers.Signer)) {
+            throw new Error('Invalid Ethereum signer');
+        }
+
+        // validate that provider is valid rollup provider
+        if (!(provider instanceof Provider)) {
+            throw new Error('Invalid rif-rollup provider');
         }
 
         const ethMessageSigner = new EthMessageSigner(ethWallet, ethSignerType);
