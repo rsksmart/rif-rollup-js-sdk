@@ -32,8 +32,6 @@ import {
 import { getChangePubkeyLegacyMessage, getChangePubkeyMessage, MAX_TIMESTAMP, isNFT } from './utils';
 import { Transaction, submitSignedTransaction } from './operations';
 import { AbstractWallet } from './abstract-wallet';
-import { Provider } from './provider';
-
 export { Transaction, RootstockOperation, submitSignedTransaction, submitSignedTransactionsBatch } from './operations';
 
 export class Wallet extends AbstractWallet {
@@ -73,7 +71,7 @@ export class Wallet extends AbstractWallet {
         }
 
         // validate that provider is valid rollup provider
-        if (!(provider instanceof Provider)) {
+        if (!(provider instanceof SyncProvider)) {
             throw new Error('Invalid rif-rollup provider');
         }
 
