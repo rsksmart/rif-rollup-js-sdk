@@ -637,6 +637,12 @@ export abstract class AbstractWallet {
     async isOnchainAuthSigningKeySet(nonce: Nonce = 'committed'): Promise<boolean> {
         const mainRifRollupContract = this.getRifRollupMainContract();
 
+        const isNonce = this.isNonce(nonce)
+
+        if(!isNonce) {
+            throw new Error('Invalid nonce value'); 
+        }
+
         const numNonce = await this.getNonce(nonce);
         try {
             const onchainAuthFact = await mainRifRollupContract.authFacts(this.address(), numNonce);
@@ -645,6 +651,10 @@ export abstract class AbstractWallet {
             this.modifyEthersError(e);
         }
     }
+
+    private isNonce(value: any): value is Nonce {
+        return typeof value === 'number' || value === "committed";
+      }
 
     async isERC20DepositsApproved(
         token: TokenLike,
