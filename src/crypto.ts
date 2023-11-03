@@ -120,9 +120,5 @@ const validateWasmFileUrl = (wasmFileUrl: string) => {
     );
   
     // Check if the string matches the URL pattern and does not contain executable code
-    if (urlPattern.test(wasmFileUrl) && !wasmFileUrl.includes('javascript:')) {
-      return true; // Valid URL without potentially malicious code
-    } else {
-      return false; // Invalid URL or potentially malicious code found
-    }
+    return urlPattern.test(wasmFileUrl) && !wasmFileUrl.includes('javascript:')
   }
