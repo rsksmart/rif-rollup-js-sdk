@@ -453,6 +453,7 @@ export interface ApiConfig {
     depositConfirmations: number;
     zksyncVersion: 'contractV4';
     // TODO: server_version (ZKS-627)
+    completeWithdrawals: boolean
 }
 
 export interface FeeRest {
