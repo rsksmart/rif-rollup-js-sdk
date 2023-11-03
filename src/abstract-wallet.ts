@@ -635,14 +635,14 @@ export abstract class AbstractWallet {
     //
 
     async isOnchainAuthSigningKeySet(nonce: Nonce = 'committed'): Promise<boolean> {
-        const mainRifRollupContract = this.getRifRollupMainContract();
-
         const isNonce = this.isNonce(nonce)
 
         if(!isNonce) {
             throw new Error('Invalid nonce value'); 
         }
 
+        const mainRifRollupContract = this.getRifRollupMainContract();
+        
         const numNonce = await this.getNonce(nonce);
         try {
             const onchainAuthFact = await mainRifRollupContract.authFacts(this.address(), numNonce);
