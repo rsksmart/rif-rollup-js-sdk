@@ -77,48 +77,34 @@ export async function loadRifRollupCrypto(wasmFileUrl?: string) {
 }
 
 const validateWasmFileUrl = (wasmFileUrl: string) => {
-    // Regular expression pattern to match a valid URL format
-    const urlPattern = new RegExp(
-      '^' +
-        // protocol identifier (optional)
-        // short syntax // or long syntax http:// or https://
-        '(?:(?:(?:https?|ftp):)?\\/\\/)' +
-        // user:pass BasicAuth (optional)
-        '(?:\\S+(?::\\S*)?@)?' +
-        '(?:' +
-        // IP address exclusion
-        // private & local networks
-        // private IP ranges: 10.0.0.0 - 10.255.255.255, 172.16.0.0 - 172.31.255.255, 192.168.0.0 - 192.168.255.255
-        '(?!(?:10|127)(?:\\.\\d{1,3}){3})(?!(?:169\\.254|192\\.168)(?:\\.\\d{1,3}){2})(?!172\\.(?:1[6-9]|2\\d|3[0-1])(?:\\.\\d{1,3}){2})' +
-        // IP address dotted notation octets
-        // excludes loopback network 0.0.0.0
-        // excludes reserved space >= 224.0.0.0
-        // excludes network & broadcast addresses
-        // (first & last IP address of each class)
-        '(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])' +
-        '(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}' +
-        '(?:\\.(?:[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))' +
-        '|' +
-        // host & domain names, may end with dot
-        // can be replaced by a shortest alternative
-        '(?:' +
-        '(?:' +
-        '[a-z0-9\\u00a1-\\uffff]' +
-        '[a-z0-9\\u00a1-\\uffff_-]{0,62}' +
-        ')?' +
-        '[a-z0-9\\u00a1-\\uffff]\\.' +
-        ')+' +
-        // TLD identifier name, may end with dot
-        '(?:[a-z\\u00a1-\\uffff]{2,}\\.?)' +
-        ')' +
-        // port number (optional)
-        '(?::\\d{2,5})?' +
-        // resource path (optional)
-        '(?:[/?#]\\S*)?' +
-        '$',
-      'i'
-    );
-  
-    // Check if the string matches the URL pattern and does not contain executable code
-    return urlPattern.test(wasmFileUrl) && !wasmFileUrl.includes('javascript:')
-  }
+    try {
+        const parsedUrl = new URL(wasmFileUrl);
+        const hostname = parsedUrl.hostname;
+        const path = parsedUrl.pathname;
+        const port = parsedUrl.port;
+        const protocol = parsedUrl.protocol.replace(':', '');
+    
+        const privateIpRangesRegex = /^(10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.|192\.168\.)/;
+        const pathRegex = /[\s'";]+/; // Example regex to check for suspicious characters in the path
+    
+        if (!['http', 'https', 'ftp'].includes(protocol)) {
+          return false;
+        }
+    
+        if (privateIpRangesRegex.test(hostname)) {
+          return false;
+        }
+    
+        if (port && (+port < 0 || +port > 65535)) {
+          return false;
+        }
+    
+        if (pathRegex.test(path)) {
+          return false; // Path contains suspicious characters
+        }
+    
+        return true; // URL passes all checks
+      } catch (error) {
+        return false; // URL is not valid
+      }
+  };
