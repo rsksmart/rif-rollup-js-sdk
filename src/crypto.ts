@@ -81,30 +81,27 @@ const validateWasmFileUrl = (wasmFileUrl: string) => {
         const parsedUrl = new URL(wasmFileUrl);
         const hostname = parsedUrl.hostname;
         const path = parsedUrl.pathname;
-        const port = parsedUrl.port;
         const protocol = parsedUrl.protocol.replace(':', '');
     
         const privateIpRangesRegex = /^(10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.|192\.168\.)/;
         const pathRegex = /[\s'";]+/; // Example regex to check for suspicious characters in the path
     
         if (!['http', 'https', 'ftp'].includes(protocol)) {
-          return false;
+          throw new Error('Invalid Protocol, http, https, ftp only allowed');
         }
     
         if (privateIpRangesRegex.test(hostname)) {
-          return false;
-        }
-    
-        if (port && (+port < 0 || +port > 65535)) {
-          return false;
+          throw new Error('Invalid Hostname');
         }
     
         if (pathRegex.test(path)) {
-          return false; // Path contains suspicious characters
+
+          throw new Error('Url path contains suspicious characters'); // Path contains suspicious characters
         }
     
         return true; // URL passes all checks
       } catch (error) {
+        console.error('Invalid Url', error)
         return false; // URL is not valid
       }
   };
