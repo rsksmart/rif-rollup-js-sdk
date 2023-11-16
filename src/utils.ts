@@ -384,6 +384,13 @@ export class TokenSet {
     }
 
     public formatToken(tokenLike: TokenOrId, amount: BigNumberish): string {
+        // Input sanitization
+        const amountBigNumber = BigNumber.from(amount.toString());
+
+        if(amountBigNumber.isNegative()){
+            throw new Error('The amount is invalid');
+        }
+
         const decimals = this.resolveTokenDecimals(tokenLike);
         const value = utils.formatUnits(amount, decimals);
 
